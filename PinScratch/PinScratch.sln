@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29609.76
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PinScratch", "PinScratch.csproj", "{B903F5A6-55D7-49E6-A2F2-89854C0E232D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B903F5A6-55D7-49E6-A2F2-89854C0E232D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B903F5A6-55D7-49E6-A2F2-89854C0E232D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B903F5A6-55D7-49E6-A2F2-89854C0E232D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B903F5A6-55D7-49E6-A2F2-89854C0E232D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3B9A2C9C-CFF0-40ED-B125-3B31B2ED5C89}
+	EndGlobalSection
+EndGlobal
