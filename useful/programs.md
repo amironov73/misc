@@ -148,7 +148,7 @@
 
 **MikTex**
 
-**TexStudio**
+**TeXstudio**
 
 **Tor Browser**
 
@@ -157,3 +157,42 @@
 **ActiveState Perl**
 
 **Pandoc**
+
+**DaVinchi Resolve**
+
+**Advanced Renamer**
+
+**Armory Crate**
+
+**CodeBlocks**
+
+**Core Temp**
+
+**CPUID CPU-Z**
+
+**CrystalDiskInfo**
+
+**CrystalDiskMark**
+
+**Driver Booster**
+
+**FlowScape**
+
+**Microsoft XNA**
+
+**Open Server Panel**
+
+**Steam**
+
+**TechPowerUp GPU-Z**
+
+**Unity**
+
+**Unlocker**
+
+**Windows Terminal**
+
+**WebView2**
+
+
+
