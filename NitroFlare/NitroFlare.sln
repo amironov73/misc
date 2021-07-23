@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31515.178
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NitroFlare", "NitroFlare\NitroFlare.csproj", "{EB5D4222-902D-4D47-BA4F-0A321E0EF6B6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NitroGet", "NitroGet\NitroGet.csproj", "{725939A6-91DF-4EA0-BC94-F229C5EBA2D7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NitroApp", "NitroApp\NitroApp.csproj", "{D82B731F-C58C-488F-9F58-1579979C0598}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EB5D4222-902D-4D47-BA4F-0A321E0EF6B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB5D4222-902D-4D47-BA4F-0A321E0EF6B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB5D4222-902D-4D47-BA4F-0A321E0EF6B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB5D4222-902D-4D47-BA4F-0A321E0EF6B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{725939A6-91DF-4EA0-BC94-F229C5EBA2D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{725939A6-91DF-4EA0-BC94-F229C5EBA2D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{725939A6-91DF-4EA0-BC94-F229C5EBA2D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{725939A6-91DF-4EA0-BC94-F229C5EBA2D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D82B731F-C58C-488F-9F58-1579979C0598}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D82B731F-C58C-488F-9F58-1579979C0598}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D82B731F-C58C-488F-9F58-1579979C0598}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D82B731F-C58C-488F-9F58-1579979C0598}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {501544D0-E782-429E-A94D-EC7771468435}
+	EndGlobalSection
+EndGlobal
