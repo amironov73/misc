@@ -1,0 +1,11 @@
+{
+	"id": "dossier",
+	"name": "Dossier",
+	"version": "1.0.0",
+	"minAppVersion": "0.15.0",
+	"description": "Displays dossier in the Markdown document",
+	"author": "Alexey Mironov",
+	"authorUrl": "http://mironov.online",
+	"fundingUrl": "http://mironov.online",
+	"isDesktopOnly": true
+}
