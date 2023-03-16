@@ -47,28 +47,29 @@ export default class NeatPlugin extends Plugin {
           div.createDiv ({
             attr: {'style': 'font-size: xx-large; font-weight: bold;'}
           })
-            .innerText = title
+            .innerHTML = title
 
           const table = div.createEl ("table", {
             attr: {
-              'border': 0,
-              'style': 'font-size: x-large;'
+              'cellspacing': 0,
+              'cellpadding': 0,
+              'style': 'font-size: x-large; border: none;'
             }
           })
 
           // табличка с характеристиками
           for (let i = 2; i < rows.length; i++) {
             const parts = rows[i].split (':', 2)
-            if (parts.length > 1) {
               const tr = table.createEl ("tr", {
-                attr: {'style': 'padding: 2mm;'}
+                attr: {'style': 'padding: 2mm; border: none;'}
               })
               tr.createEl ("td", {
-                attr: {'style': 'vertical-align: top; font-weight: bold;'}
-              }).innerText = parts[0].trim()
+                attr: {'style': 'vertical-align: top; font-weight: bold; border: none;'}
+              }).innerHTML = parts[0].trim()
+            if (parts.length > 1) {
               tr.createEl ("td", {
-                attr: {'style': 'vertical-align: top;'}
-              }).innerText = parts[1].trim()
+                attr: {'style': 'vertical-align: top; border: none;'}
+              }).innerHTML = parts[1].trim()
             }
           }
         }
