@@ -63,10 +63,17 @@ export default class NeatPlugin extends Plugin {
               const tr = table.createEl ("tr", {
                 attr: {'style': 'padding: 2mm; border: none;'}
               })
+            if (parts.length == 1) {
+              tr.createEl ("td", {
+                attr: {
+                  'colspan': 2,
+                  'style': 'vertical-align: top; line-height: 0.8; border: none;'
+                }
+              }).innerHTML = parts[0].trim()
+            } else {
               tr.createEl ("td", {
                 attr: {'style': 'vertical-align: top; font-weight: bold; border: none;'}
               }).innerHTML = parts[0].trim()
-            if (parts.length > 1) {
               tr.createEl ("td", {
                 attr: {'style': 'vertical-align: top; border: none;'}
               }).innerHTML = parts[1].trim()
