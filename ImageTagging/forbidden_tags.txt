@@ -1,0 +1,13 @@
+background
+boy
+foreground
+front
+focus
+girl
+greyscale
+medium
+monochrome
+parody
+photo
+solo
+style
