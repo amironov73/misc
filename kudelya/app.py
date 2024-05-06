@@ -77,9 +77,24 @@ def translate(source_text: str) -> str:
     return completions["choices"][0]["message"]["content"]
 
 
+def filter_chars(text: str) -> str:
+    """
+    Фильтрация текста от неожиданных символов
+    :param text: Текст, подлежащий фильтрации.
+    :return: Отфильтрованный текст.
+    """
+    filtered = []
+    for c in text:
+        if c in ' ()' or ('а' <= c <= 'я'):
+            filtered.append(c)
+    return ''.join(filtered)
+
+
 def smart_translate(source_text: str) -> str:
     """
     Умный перевод текста, учитывающий закидоны LLM.
+    :param source_text: Исходный текст.
+    :return: Переведенный текст.
     """
     result = translate(source_text)
     result = result.replace('\n', ' ').strip(' .')
@@ -93,10 +108,12 @@ def fast_translate(source_text: str) -> str:
     :return: Переведенный текст.
     """
     result = []
+    # убираем символ ударения из слов
     words = source_text.split(', ')
     for word in words:
+        word = filter_chars(word)
         if word not in dictionary:
-            dictionary[word] = smart_translate(word)
+            dictionary[word] = smart_translate(word).lower().strip(' .')
 
         if word not in ['.', '-']:
             result.append(dictionary[word])
@@ -171,6 +188,24 @@ def get_tags(text: str) -> List[str]:
     return result
 
 
+def extract_nouns(text: str) -> List[str]:
+    """
+    Извлечение существительных из текста.
+    :param text: Разбираемый текст.
+    :return: Список существительных
+    """
+    doc = ru(text)
+    nouns = []
+    for token in doc:
+        if token.pos_ == 'NOUN':
+            noun = str(token.lemma_)
+            left = next(token.lefts, None)
+            if left and left.pos_ == 'ADJ':
+                noun = str(left.lemma_) + ' ' + noun
+            nouns.append(noun)
+    return nouns
+
+
 counter = {}
 all_images = find_all_images()
 
@@ -180,9 +215,7 @@ with io.open('tags.txt', 'w', encoding='utf-8') as output:
                              .lower().strip('.'))
         one.second_line_ru = fast_translate(', '
                                             .join(get_tags(one.second_line_en))).lower().strip('.')
-        doc = ru(one.first_line_ru)
-        one.tags_ru = ([str(token.lemma_) for token in doc if
-                        token.pos_ in ['NOUN', 'ADJ']] +
+        one.tags_ru = (extract_nouns(one.first_line_ru) +
                        [item.strip(' "') for item in
                         one.second_line_ru.split(',')])
 
