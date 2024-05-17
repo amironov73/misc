@@ -1,0 +1,2 @@
+spacy
+pymorphy2
