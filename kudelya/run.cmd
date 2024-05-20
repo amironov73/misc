@@ -1,3 +1,3 @@
 @echo off
 
-.venv\Scripts\python app.py 2> errors.txt
+.venv\Scripts\python -u app.py

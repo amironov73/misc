@@ -1,64 +1,102 @@
-accordion 
+accordion
 аккордион
-action 
+action
 действие
-address 
+address
 адрес
-adjust 
+adjust
 регулирование
-afro 
+adjusting eyewear
+настройка очков
+afro
 афро
-age 
+age
 возраст
-aim 
+aged down
+старение вниз
+aim
 цель
-air 
+aiming
+целевая настройка
+air
 воздух
-aircraft 
+air conditioner
+кондиционер воздуха
+aircraft
 воздушный транспорт
-airplane 
+airplane
 самолет
-airport 
+airport
 аэропорт
-album 
+album
 альбом
-alcohol 
+album cover
+обложка альбома
+alcohol
 алкоголь
-alley 
+alley
 переулок
-angel 
+ambiguous gender
+неопределенный род
+american flag
+флаг
+anchor
+якорь
+angel
 ангел
-animal 
+animal
 животное
-animification 
+animal ears
+уши животных
+animal focus
+животные
+animification
 анимация
-antler 
+antler
 рога
-apron 
+apple
+яблоко
+apron
 фартук
-arch 
+arch
 арка
-architecture 
+archery
+стрелба из лука
+architecture
 архитектура
-area 
+area
 область
-arm 
+arm
 рука
-armor 
+arm up
+поднимите руку
+armor
 доспехи
-army 
+arms behind back
+руки за спину
+arms up
+руки вверх
+army
 армия
-arrow 
+arrow
 стрелка
-art 
+arrow (projectile)
+стрелу (пуля)
+art
 искусство
-artist 
+art brush
+арт-кисть
+artist
 художник
-ascot 
+artist name
+имя художника
+ascot
 аскот
-astronaut 
+astronaut
 астронавт
-attire 
+athletic leotard
+спортивный леотард
+attire
 одежда
 audience
 аудитория
@@ -70,42 +108,74 @@ back
 спина
 backpack
 рюкзак
+backwards hat
+наклоненная назад кепка
 badge
 значок
 bag
 сумка
 balcony
 балкон
+bald
+лысый
 ball
 мяч
+ballerina
+балерина
 ballet
 балет
+ballet slippers
+балетные тапочки
 balloon
 шар
 bamboo
 бамбук
+bamboo forest
+бамбуковый лес
 band
 полоса
+band uniform
+форма оркестра
 bandage
 повязка
+bandages
+бинты
 bandaid
 лейкопластырь
+bandana
+бандана
+bangs
+челка
 banner
 баннер
 bar
 полоса
+bar (place)
+бар
+bare tree
+дерево
+barefoot
+босоногий
 barn
 сарай
 barrel
 бочка
 baseball
 бейсбол
+baseball cap
+бейсболка
 basket
 корзина
 basketball
 баскетбол
+basketball uniform
+баскетбольная форма
 bathing
 купание
+bathroom
+ванная комната
+bathtub
+ванна
 battleship
 линкор
 beach
@@ -128,34 +198,80 @@ beret
 берет
 bicycle
 велосипед
+bicycle basket
+велосипедный корзик
 bike
 велосипед
 bikini
 бикини
+binoculars
+бинокли
 bird
 птица
+black background
+черный фон
+black border
+черная рамка
+black cat
+черная кошка
+black footwear
+черная обувь
+black hair
+черные волосы
+black jacket
+черная куртка
+black necktie
+черный галстук
+black pants
+черные брюки
+black skirt
+черная юбка
+black suit
+черный костюм
 blind
 слепой
+blonde hair
+блондинка
 blood
 кровь
+blue dress
+синяе платье
+blue hair
+голубые волосы
+blue skirt
+синяя юбка
+blue sky
+голубое небо
 blur
 размытие
 blurry
 размытый
+blurry background
+размытый фон
+blurry foreground
+размытый передний план
 board
 доска
+board game
+настольная игра
 boat
 лодка
 body
 тело
+bokeh
+бокэ
 book
 книга
+book stack
+стопка книг
 bookcase
 книжный шкаф
 bookshelf
 книжная полка
 boot
 ботинок
+boots
+ботинки
 border
 граница
 bottle
@@ -164,6 +280,10 @@ bouquet
 букет
 bow
 поклон
+bow (weapon)
+лук
+bowl
+боул
 bowtie
 галстук-бабочка
 box
@@ -174,14 +294,22 @@ braid
 косичка
 branch
 ветвь
+brand name imitation
+брендовая имитация
 bread
 хлеб
 break
 перерыв
 breast
 грудь
+breasts
+груди
 brick
 кирпич
+brick wall
+кирпичная стена
+bridal veil
+свадебный вуаль
 bride
 невеста
 bridge
@@ -190,8 +318,12 @@ bridle
 уздечка
 briefcase
 портфель
+broken window
+разбитая школа
 broom
 метла
+brown hair
+шатен
 brush
 щетка
 bubble
@@ -218,28 +350,44 @@ butterfly
 бабочка
 button
 кнопка
+buttons
+кнопки
 buzz
 гул
 cabin
 кабина
+cabinet
+шкаф
 cable
 кабель
 cage
 клетка
 cake
 торт
+calendar (object)
+календарь (объект)
 camera
 камера
+camouflage
+камуфляж
+can
+может
 canal
 канал
 candle
 свеча
+candlestand
+свечник
 cane
 тростник
+cannon
+пушка
 canoe
 каноэ
 canvas
 холст
+canvas (object)
+холст (объект)
 cap
 кепка
 cape
@@ -250,8 +398,12 @@ card
 карта
 cardboard
 картон
+cardboard box
+картонная коробка
 cargo
 груз
+carpet
+ковер
 carriage
 перевозка
 carry
@@ -264,12 +416,17 @@ castle
 замок
 cat
 кот
+cat ears
+уши кота
+caterpillar tracks
+гусеничный ход
 ceiling
 потолок
+ceiling light
+потолочный светильник
 cell
 клетка
 cellphone
-сотовый
 телефон
 cemetery
 кладбище
@@ -287,6 +444,12 @@ chandelier
 люстра
 checker
 шашки
+chef
+шеф
+chef hat
+шефская шляпа
+cherry blossoms
+вишневый цветущий
 chess
 шахматы
 chest
@@ -297,10 +460,14 @@ chimney
 камин
 chin
 подбородок
+chinese clothes
+китайская одежда
 chip
 чип
 choker
 колье
+chopsticks
+палочки для еды
 church
 церковь
 cigarette
@@ -309,12 +476,16 @@ circus
 цирк
 city
 город
+city lights
+свет города
 cityscape
 городской пейзаж
 classroom
 классная комната
 clean
 чистый
+cleavage
+разделение
 climb
 взбираться
 cloak
@@ -323,6 +494,10 @@ clock
 Часы
 close
 закрытый
+closed eyes
+закрытые глаза
+closeup
+крупный план
 cloth
 ткань
 clothe
@@ -331,14 +506,22 @@ clothing
 одежда
 cloud
 облако
+cloudy sky
+облачное небо
 coal
 уголь
 coat
 пальто
 coffee
 кофе
+coffee mug
+кофейная чашка
 coin
 монета
+collar
+ошейник
+collared shirt
+рубашка с воротником
 collect
 собрание
 column
@@ -347,6 +530,8 @@ comb
 гребень
 come
 приходить
+comic
+комикс
 computer
 компьютер
 conditioner
@@ -357,12 +542,18 @@ construction
 строительство
 contact
 контакт
+contemporary
+современный
+contrail
+контрейл
 control
 контроль
 convenience
 удобство
 conveyor
 конвейер
+cooking
+кулинария
 cord
 шнур
 corner
@@ -385,18 +576,28 @@ courtyard
 двор
 cover
 крышка
+covering
+покрытие
 cow
 корова
+cowboy hat
+ковбойская шляпа
 crack
 трескаться
 crane
 кран
+crane (machine)
+стройплощадка кран (машина)
 cream
 крем
 creature
 существо
 cross
 крест
+crossed arms
+перекрестив руки
+crossed legs
+перекрещенные ноги
 crosswalk
 переход
 crowd
@@ -407,10 +608,16 @@ crystal
 кристалл
 cup
 чашка
+curly hair
+кудрявый волос
 curtain
 занавес
+curtains
+шторы
 cut
 резать
+cutting board
+резановая доска
 cyberpunk
 киберпанк
 dam
@@ -421,6 +628,10 @@ dancing
 танцы
 dark
 темнота
+dark skin
+темная кожа
+darkskinned male
+темнокожий мужчина
 date
 дата
 day
@@ -437,12 +648,16 @@ deer
 олень
 demolish
 снос
+denim
+дженмс
 depth
 глубина
 design
 дизайн
 desk
 рабочий стол
+detached sleeves
+отдельные рукава
 dig
 копать
 direct
@@ -471,18 +686,26 @@ doorway
 дверной проем
 dot
 точка
+doublebreasted
+двойной ряд пуговиц
 down
 вниз
 draw
 рисовать
 drawing
 рисунок
+drawing bow
+нарисовать лук
 dress
 платье
 drink
 напиток
 drinking
 питьевой
+drinking glass
+стакан для питья
+drinking straw
+питьевая соломинка
 drip
 капать
 drive
@@ -495,42 +718,72 @@ driving
 вождение
 drum
 барабан
+drum set
+барабанная установка
+drumsticks
+барабанные палочки
 dump
 свалка
 dusk
 сумерки
 ear
 ухо
+earbuds
+наушники-вкладыши
 earphone
+наушники
+earphones
 наушники
 earring
 серьга
+earrings
+сережки
 easel
 мольберт
+east asian architecture
+восточноазиатская архитектура
 eat
 еда
 edge
 край
+electric guitar
+электрическая гитара
 embassy
 посольство
 emblem
 герб
 engine
 двигатель
+english text
+текст
 entrance
 вход
+epaulettes
+эполеты
 equipment
 оборудование
+everyone
+всемирно
+exercise
+упражнение
 eye
 глаз
+eye focus
+око фокусировка
 eyebrow
 бровь
 eyewear
 очки
+eyewear removed
+очки сняты
 facade
 фасад
 face
 лицо
+faceless
+безликий
+facial hair
+растительность на лице
 factory
 фабрика
 fall
@@ -541,10 +794,16 @@ farm
 ферма
 fat
 жир
+fat man
+толстяк
 faucet
 кран
 feather
 перо
+feet
+фиты
+female child
+девочк
 fence
 изгородь
 ferry
@@ -557,18 +816,26 @@ field
 поле
 fighter
 истребитель
+fighter jet
+истребитель
 film
 пленка
 finger
 палец
+finger to mouth
+пальцы к рту
 fire
 огонь
 fish
 рыба
 fishing
 рыбалка
+fishing rod
+удлинение для лова рыбы
 fishnet
 рыболовная сеть
+fishnets
+сети для лова рыбы
 fix
 ремонт
 flag
@@ -585,6 +852,8 @@ flood
 наводнение
 floor
 пол
+floral print
+флористический принт
 flow
 поток
 flower
@@ -601,24 +870,50 @@ food
 еда
 foot
 ступня
+foot focus
+фокус на ногу
 football
 футбол
+footprints
+отпечатки ног
 foreground
 передний план
 forest
 лес
 fork
 вилка
+formal
+формальный
 fountain
 фонтан
 frame
 рамка
+french flag
+французский флаг
 frill
 оборка
+from above
+свыше
+from behind
+сзади
+from below
+снизу
+fruit
+фрукт
+full body
+полное тело
+full moon
+полный месяц
 fur
 шерсть
+fur hat
+шапка из меха
+fur trim
+меховая отделка
 furnace
 печь
+gakuran
+гакуран
 game
 игра
 garage
@@ -637,44 +932,72 @@ gem
 жемчужина
 gender
 пол
+giant
+гигант
 glass
 стекло
+glasses
+очки
 glassware
 изделия из стекла
 glove
 перчатка
-goal 
+gloves
+перчатки
+goal
 цель
 goggle
 погасить
+goggles
+очки защиты или спортивные очки обычно используемые для лыж сноуборда и тд русский эквивалент  это скорее всего очки в маске
+goggles on head
+очки на голове
+grabbing
+захватывание
 gradient
 градиент
 graphite
 графит
+graphite (medium)
+графит (средней твердости)
 grass
 трава
 grave
 могила
 graveyard
 кладбище
+green hair
+зеленые волосы
 greet
 приветствие
+grey hair
+седые волосы
+grey pants
+серая брюки
 grin
 ухмылка
 groom
 жених
 ground
 земля
-ground
-vehicle
+ground vehicle
+транспортное средство
 group
 группа
 guitar
 гитара
 gun
 пистолет
+gym
+гимназия
 hair
 волосы
+hair bow
+волосовая заколка в форме банта
+hair bun
+хейр бэн
+hairband
+осуществляю буквальный перевод хейрбэнд
 hairclip
 зажим для волос
 haircut
@@ -687,10 +1010,26 @@ halo
 гало
 hand
 рука
+hand fan
+веер для рук
+hand in pocket
+рука в кармане
+hand on anothers shoulder
+рука на плече другого человека
+hand on hip
+рука на тазу
+hand on own chin
+рука на собственном подбородке
+hand up
+поднять руку
 handbag
 сумочка
 handgun
 пистолет
+hands in pockets
+руки в карманах
+hands on hips
+руки на талии
 handwriting
 почерк
 hang
@@ -703,9 +1042,13 @@ hatch
 люк
 head
 голова
+head scarf
+шарф для головы
 headband
 повязка на голове
 headphone
+наушники
+headphones
 наушники
 headwear
 головной убор
@@ -713,12 +1056,16 @@ heart
 сердце
 heel
 каблук
+helicopter
+вертолет
 helmet
 шлем
 help
 помощь
 herd
 стадо
+high heels
+высокие каблуки
 hill
 холм
 hillside
@@ -731,24 +1078,62 @@ hockey
 хоккей
 hold
 держать
+holding
+держит
+holding animal
+держание животного
+holding basket
+держатель корзинки
+holding bow (weapon)
+держать лук
+holding camera
+держать камеру
+holding cup
+держащий чашку
+holding fishing rod
+держание рыболовной удилины
+holding flower
+держать цветок
+holding hands
+держаться за руки
+holding paper
+держать бумагу
+holding phone
+держать телефон
+holding sign
+держит плакат
+holding sword
+держать меч
+holding weapon
+держать оружие
 hole
 дыра
 hood
 капюшон
+hood up
+капюшон поднять вверх
+hoodie
+худи
 hoop
 обруч
 horizon
 горизонт
 horn
 рог
+horns
+рога
 horror
 ужастик
+horror (theme)
+ужасы тема
 horse
 лошадь
 hose
 шланг
 hospital
 больница
+hospital bed
+больничная койка
 house
 дом
 hug
@@ -757,26 +1142,52 @@ hula
 хула
 ice
 лед
+ice skates
+коньки для катания по льду
+id card
+ид кард
 illustration
 иллюстрация
 index
 индекс
+indoors
+в помещении
+industrial pipe
+промышленный трубопровод
+innertube
+внутренняя резиновая камера
 inscription
 надпись
 insert
 вставлять
 instrument
 инструмент
+instrument case
+инструментальный кейс
 interior
 интерьер
+intravenous drip
+интравенезная капельница
 iron
 железо
 ironwork
 работа с железом
+italian flag
+итальянский флаг
 item
 элемент
 jacket
 куртка
+jacket on shoulders
+пиджак на плечах
+japan
+япония
+japanese clothes
+японская одежда
+japanese flag
+японский флаг
+jeans
+джинсы
 jet
 самолет
 jewelry
@@ -785,20 +1196,36 @@ jug
 кувшин
 jump
 прыжок
+katana
+катана
 keyboard
 клавиатура
+keyboard (computer)
+клавиатура (компьютерная)
 kicking
 ноги
+kimono
+кимоно
 kiss
 поцелуй
+kitchen
+кухня
+kitchen knife
+кухонный нож
 kite
 воздушный змей
 knee
 колено
+kneehighs
+ноги в коленях
 kneel
 на коленях
+kneeling
+на колени
 knife
 нож
+labcoat
+лабкоут
 laboratory
 лаборатория
 ladder
@@ -813,6 +1240,8 @@ landscape
 пейзаж
 lantern
 фонарь
+lanyard
+ланьерд
 lap
 колени
 laptop
@@ -827,29 +1256,47 @@ lean
 наклонять
 leather
 кожа
+leather jacket
+кожайная куртка
 lecture
 лекция
 leg
 нога
 lens
 объектив
+leopard print
+леопардовый принт
+leotard
+летор это вид обтягивающей одежды обычно изготавливаемой из эластичного материала охватывающей  и ноги с короткими или длинными рукавами и шортами или штанинами достигающими до бедер леторы носят гимнасты акробаты танцоры и другие спортсмены
+letterboxed
+леттербоксед
 library
 библиотека
 lie
 ложь
 life
 жизнь
+lifebuoy
+спасательный круг
 lift
 поднятие
 light
 свет
+light rays
+лучи света
 lighthouse
 маяк
 lightning
 молния
+lights
+осветительные приборы
+lily pad
+лилипад
 line
 линия
 lip
+губы
+lips
 губы
 load
 нагрузка
@@ -857,10 +1304,32 @@ loafer
 лофер
 location
 расположение
+locker
+шкафчик
 log
 бревно
+long hair
+длинные волосы
+long skirt
+длинная юбка
+long sleeves
+длинные рукава
 look
 взгляд
+looking at another
+смотрю на другого
+looking at viewer
+посмотрите на зрителя
+looking away
+отворачиваюсь
+looking back
+обращаясь назад
+looking outside
+смотрю в окно
+looking to the side
+смотрит в сторону
+looking up
+смотрю вверх
 lot
 множество
 luggage
@@ -871,12 +1340,26 @@ machine
 машина
 machinery
 машины
+magic circle
+магический круг
+maid
+девушкапосыльная
+maid apron
+поваренная накрахмаленная салфетка
+maid headdress
+девушкеслуге головной убор
 make
 поделка
 makeup
 макияж
+male child
+мужской ребенок
+male swimwear
+мужской купальный костюм
 man
 человек
+manly
+мужественно
 mannequin
 манекен
 mansion
@@ -899,6 +1382,10 @@ mecha
 меха
 medal
 медаль
+medium breasts
+среднего размера грудь
+meme
+мем
 memorial
 мемориал
 message
@@ -907,24 +1394,36 @@ metal
 металл
 microphone
 микрофон
+microphone stand
+микрофонная стойка
 microscope
 микроскоп
 middle
 середина
 military
 военный
+military hat
+военные шляпы
+military uniform
+военная форма
+military vehicle
+военный автомобиль
 mine
 мой
 mineral
 минеральная
 mirror
 зеркало
+mittens
+перчатки
 mob
 толпа
 model
 модель
 mole
 крот
+mole under eye
+моля под глазом
 money
 деньги
 monitor
@@ -939,10 +1438,16 @@ mosque
 мечеть
 motion
 движение
+motion blur
+размытие от движения
 motor
 мотор
+motor vehicle
+транспортное средство
 motorcycle
 мотоцикл
+motorcycle helmet
+мотоциклетный шлем
 mountain
 гора
 mouse
@@ -951,20 +1456,30 @@ moustache
 усы
 mouth
 рот
+mouth mask
+ротовая маска
 movie
 фильм
 mud
 грязь
+mug
+муг
+muscular
+мышечный
 museum
 музей
 music
 музыка
+musical note
+музыкальная нота
 mustache
 усы
 name
 имя
 nature
 природа
+navel
+нос
 neck
 шея
 necklace
@@ -979,16 +1494,28 @@ newspaper
 газета
 night
 ночь
+night sky
+ночной небосвод
 nipple
 сосок
+nipples
+соски
+no humans
+безлюдно
+no shoes
+нет обуви
 nose
 нос
 note
 объявление
 notebook
 блокнот
+nude
+нюд
 nurse
 медсестра
+nurse cap
+медицинская повязка
 oar
 весло
 object
@@ -997,30 +1524,76 @@ ocean
 водоем
 office
 офис
+old
+старый
+old man
+старый человек
+old woman
+старая женщина
+on back
+сзади
+on side
+на стороне
+one eye closed
+один глаз закрыт
+one knee
+одно колено
+onepiece swimsuit
+монокини
+onion
+лук репчатый
+open clothes
+открытые одежды
+open jacket
+открытый жакет
+open mouth
+открыть рот
 opening
 открытие
 orchestra
 оркестр
 ornament
 украшение
+other
+другой
+others
+другие
+outdoors
+вне помещения
+outstretched arm
+растянутая рука
+outstretched arms
+растопыренные руки
+overalls
+комбинезон
 overlook
 игнорировать
 paddle
 промежуточный
+page number
+номер страницы
 paint
 краска
 paintbrush
 кисть
 painting
 рисование
+painting (action)
+рисование
+painting (object)
+картина (объект)
 palette
 палитра
+palette (object)
+палитра (объект)
 palm
 ладонь
 panel
 панель
 pant
 штамповка
+pants
+шорты
 pantyhose
 колготки
 paper
@@ -1031,6 +1604,10 @@ park
 парк
 part
 часть
+parted lips
+разделенные губы
+partially submerged
+частично погруженный
 path
 путь
 pavement
@@ -1039,6 +1616,8 @@ peace
 мир
 peak
 вершина горы
+peaked cap
+шапка с козырьком
 pectoral
 грузоподъемность
 pen
@@ -1057,12 +1636,20 @@ pet
 домашний питомец
 phone
 телефон
+photo (object)
+фото объект
+photo inset
+фотовкладыш
 photograph
 фотография
+piano
+пьяно
 piano пианино
 pick выбирать
 picture
 картина
+picture frame
+рамка для картины
 piece
 кусок
 pier
@@ -1073,6 +1660,10 @@ pillar
 столб
 pilot
 пилот
+pine tree
+сосновый дерево
+pinstripe suit
+пиджак в полоску
 pipe
 трубка
 pitcher
@@ -1081,8 +1672,12 @@ place
 место
 plaid
 плед
+plaid shirt
+пладевая рубашка
 plane
 самолет
+planet
+планета
 plant
 растение
 plaque
@@ -1097,6 +1692,10 @@ player
 игрок
 playing
 игра
+playing instrument
+играть на инструменте
+pleated skirt
+плиссированная юбка
 plectrum
 плектрум
 pocket
@@ -1107,6 +1706,8 @@ pointing
 указывающий
 pokemon
 покемон
+pokemon (creature)
+покемон (существо)
 poker
 покер
 pole
@@ -1115,12 +1716,20 @@ polearm
 полярм
 police
 милиция
+police uniform
+полицейская форма
 polo
 поло
 pompadour
 помпадур
 pond
 пруд
+ponytail
+хвоста пони
+pool
+бассейн
+pool ladder
+бассейновая лестница
 porthole
 иллюминатор
 portrait
@@ -1131,18 +1740,30 @@ post
 почта
 poster
 плакат
+poster (object)
+плакат объект
 pot
 горшок
+potted plant
+посуда с растением
 pour
 залить
+pouring
+лить
 powder
 пудра
 power
 власть
+power lines
+линии электропередач
+praying
+молиться
 president
 президент
 priest
 священник
+prison clothes
+тюремная одежда
 profile
 профиль
 projectile
@@ -1153,12 +1774,18 @@ puddle
 лужа
 pull
 тянуть
+purple scarf
+фиолетовый шарф
 push
 толкать
 put
 помещать
+quiver
+тремор
 rabbit
 кролик
+rabbit ears
+ушастые кролики
 race
 гонка
 rack
@@ -1173,6 +1800,8 @@ railing
 рельсы
 railroad
 железная дорога
+railroad tracks
+железнодорожные пути
 rain
 дождь
 raincoat
@@ -1189,12 +1818,22 @@ read
 чтение
 reading
 чтение
+real life insert
+реальная жизнь вставка
 record
 запись
 recording
 запись
+red dress
+красное платье
+red hair
+красный волос
+red necktie
+красный галстук
 reflection
 отражение
+refrigerator
+холодильник
 reindeer
 олень
 remove
@@ -1221,6 +1860,8 @@ river
 река
 road
 дорога
+road sign
+дорожный знак
 robe
 халат
 robot
@@ -1235,6 +1876,8 @@ roll
 рулон
 roller
 роллер
+rolling suitcase
+колесный чемодан
 roof
 крыша
 rooftop
@@ -1245,11 +1888,16 @@ root
 корень
 rope
 веревка
-row ряд
+row
+ряд
+rubber duck
+каучуковая утка
 rubble
 обломки
 ruin
 руина
+ruins
+руины
 run
 бегать
 runway
@@ -1258,28 +1906,44 @@ sack
 мешок
 sailor
 моряк
+sailor collar
+- мореходный воротник
+sailor hat
+моряцкая шляпа
 salon
 салон
 sand
 песок
 sandal
 сандалия
+sandals
+сандалии
 sandwich
 сэндвич
 sash
 пояс
+saucer
+блюдо
 say
 высказывание
 scaffold
 строительные леса
 scar
 шрам
+scar on face
+шрам на лице
 scarf
 шарф
 school
 школа
+school desk
+школьная парты
+school uniform
+школьная форма
 science
 наука
+science fiction
+наука-фантастика
 screen
 экран
 sculpture
@@ -1288,6 +1952,8 @@ scythe
 коса
 sea
 море
+seagull
+чайка
 seat
 сиденье
 secretary
@@ -1296,6 +1962,10 @@ seesaw
 качели
 sell
 продавать
+serafuku
+серафуку
+serious
+серьезный
 set
 набор
 sewing
@@ -1304,24 +1974,34 @@ shadow
 тень
 shake
 встряска
+shako cap
+шако
 share
 делиться
 shawl
 шаль
 sheet
 лист
+sheet music
+нотная грамота
 shelf
 полка
 shield
 щит
+shimenawa
+шименава
 ship
 корабль
 shirt
 рубашка
 shoe
 обувь
+shoes
+обувь
 shoot
 стрелять
+shooting star
+падающая звезда
 shop
 магазин
 shopping
@@ -1330,16 +2010,30 @@ shore
 берег
 short
 короткий
+short hair
+короткие волосы
+short sleeves
+короткие рукава
+shorts
+шорты
 shot
 выстрелил
 shoulder
 плечо
+shovel
+лопата
 show
 показывать
+shower head
+душевая головка
+showering
+душевание
 shrine
 святыня
 side
 сторона
+sideburns
+бородавки
 sidewalk
 тротуар
 sign
@@ -1350,12 +2044,16 @@ silhouette
 профиль
 sill
 подоконник
+simple background
+простой фон
 sing
 пение
 singe
 пение
 singing
 пение
+single hair bun
+одиночный пучок из волос
 sink
 раковина
 sit
@@ -1384,8 +2082,16 @@ slab
 плита
 sleep
 сон
+sleeping
+спящий
 sleeve
 рукав
+sleeveless
+безрукавный
+sleeveless dress
+безрукавое платье
+sleeves rolled up
+рукава до локтя свернуты назад
 slick
 пятно
 smartphone
@@ -1398,24 +2104,42 @@ smokestack
 дымовая труба
 smoking
 курить
+smoking pipe
+клюка это табачная трубка для курения
 snake
 змея
 sneaker
 кроссовки
+sneakers
+сникерсы
 sniper
 снайпер
+sniper rifle
+снайперская винтовка
 snow
 снег
 snowing
 идет снег
 soccer
 футбол
+soccer ball
+футбольный мяч
 sock
 носок
+socks
+носки
 soldier
 солдат
+solo focus
+соло фокус
+soviet
+советский
+space
+пространство
 spacecraft
 космический корабль
+spacesuit
+космический костюм
 spark
 искра
 speaker
@@ -1424,17 +2148,27 @@ spear
 копье
 speech
 речь
+spoon
+ложка
+sports car
+спортивный автомобиль
 sportswear
-спортивная
-одежда
+спортивная одежда
+spread arms
+развести руки в стороны
 squatting
 приседание
-sack куча
 stadium
 стадион
+staff
+персонал
 stage
 сцена
+stained glass
+витражное стекло
 stair
+лестница
+stairs
 лестница
 stalk
 стебель
@@ -1444,6 +2178,12 @@ standing
 стоящий
 star
 звезда
+star (sky)
+звезда небесная сфера
+star (symbol)
+звезда символ
+starry sky
+звездное небо
 state
 государственный
 station
@@ -1462,24 +2202,40 @@ stethoscope
 стетоскоп
 stick
 палка
+still life
+натюрморт
 stone
 камень
 stool
 табуретка
 store
 магазин
+stove
+печь
 straw
 солома
+straw hat
+соломенный шляп перевод слова
 street
 улица
 string
 нить
 stripe
 полоса
+striped
+полосатый
+striped necktie
+полосатый галстук
+striped shirt
+полосатая рубашка
 stubble
 стерна
 studio
 студия
+stuffed animal
+заполненная игрушка
+stuffed toy
+заполненная игрушка
 style
 стиль
 suit
@@ -1488,20 +2244,34 @@ suitcase
 чемодан
 sun
 солнце
+sun hat
+солнечная шляпа
 sunglass
+солнцезащитные очки
+sunglasses
 солнцезащитные очки
 sunlight
 солнечный свет
+surreal
+сюрреальный
 surround
 окружение
 suspender
 подвеска
+suspenders
+подвязки
 sweat
 пот
 sweater
 свитер
 swim
 плавать
+swim briefs
+шорты для плавания
+swim cap
+плавательный колпак
+swim trunks
+шорты для плавания
 swimsuit
 купальник
 swimwear
@@ -1512,12 +2282,16 @@ symbol
 символ
 table
 стол
+tablecloth
+серветка
 tail
 хвост
 talk
 разговор
 tank
 бак
+tank top
+тэнк топ
 tarmac
 асфальт
 tarp
@@ -1528,12 +2302,16 @@ tea
 чай
 teacher
 учитель
+teacup
+чашка для чая
 teapot
 заварочный чайник
 tear
 разрыв
 teepee
 висист
+teeth
+зубы
 telephone
 телефон
 television
@@ -1544,6 +2322,8 @@ tentacle
 щупальце
 text
 текст
+text focus
+текстовый фокус
 texture
 текстура
 theater
@@ -1554,26 +2334,50 @@ thigh
 бедро
 thighhigh
 бедра
+thighhighs
+тай-хайсы
 thread
 нить
 thumb
 большой палец
+thumbs up
+большой палец вверх
 tie
 галстук
 tiger
 тигр
 tile
 плитка
+tile floor
+плиточный пол
+tile wall
+плиточный стеновой панелинг
+tiles
+плиты
 tilt
 наклон
+tiptoes
+на кончиках пальцев
 toast
 тост
+toes
+пальцы ног
+tokin hat
+токин хэт
 tombstone
 надгробия
+tongue
+язык
+too many
+слишком много
 tooth
 зуб
 top
 вершина
+top hat
+верхний шляпной цилиндр
+topless male
+обнаженный по пояс мужчина
 torch
 факел
 torii
@@ -1582,6 +2386,8 @@ touch
 трогать
 towel
 полотенце
+towel on head
+полотенце на голове
 tower
 башня
 town
@@ -1590,20 +2396,32 @@ toy
 игрушка
 track
 отслеживать
+track pants
+шорты для бега
 tractor
 трактор
+traffic light
+светофор
 trailer
 трейлер
 train
 поезд
+train interior
+внутреннее убранство поезда
+train station
+железнодорожная станция
 tram
 трамвай
 trash
 мусор
+tray
+поддон
 tree
 дерево
 trench
 траншея
+trench coat
+тренчкот
 trick
 трюк
 trim
@@ -1618,6 +2436,8 @@ trumpet
 труба
 trunk
 ствол
+tshirt
+фуражка
 tuba
 туба
 tug
@@ -1628,28 +2448,58 @@ turtle
 черепаха
 turtleneck
 водолазка
+tutu
+туту
+twin braids
+двойные косы
+twintails
+твинтейлз
 typewriter
 печатная машинка
+uchikake
+учикэ
 umbrella
 зонтик
+underwater
+под водой
 underwear
 нижнее белье
 uniform
 униформа
+upper body
+верхняя часть тела
 upside
 вверх
+ushanka
+ушанка
+utility pole
+опора
 valve
 клапан
 van
 фургон
+vanishing point
+точка схода
 vase
 ваза
 vehicle
 транспортное средство
-veil вуаль
-vend продавец
-vest жилет
-vice порок
+vehicle focus
+транспортное средство
+veil
+вуаль
+vend
+продавец
+verticalstriped shirt
+вертикальная полоска рубашка
+very long hair
+очень длинные волосы
+very short hair
+очень короткие волосы
+vest
+жилет
+vice
+порок
 victim
 жертва
 view
@@ -1662,22 +2512,32 @@ violin
 скрипка
 voile
 вуаль
+volleyball
+волейбол
+wading
+бродить
 walk
 прогулка
 walking
 прогулка
 wall
 стена
+wall clock
+стенная часы
 war
 война
 warehouse
 склад
 warship
 военный корабль
+wataboushi
+ватабоси
 watch
 смотреть
 water
 вода
+water bottle
+фляга с водой
 watercraft
 судно
 watermark
@@ -1686,6 +2546,10 @@ waterway
 водный путь
 wave
 волна
+waves
+волны
+waving
+махая
 way
 путь
 weapon
@@ -1696,14 +2560,36 @@ web
 паутина
 wedding
 свадьба
+wedding dress
+свадебное платье
 weld
 сварка
+wet
+мокрый
 wetsuit
 гидрокостюм
+what
+что
 wheat
 пшеница
 wheel
 колесо
+wheelchair
+кресло-коляска
+white background
+белый фон
+white flower
+белый цветок
+white footwear
+белая обувь
+white hair
+белые волосы
+white headwear
+белый головной убор
+white shirt
+белая рубашка
+wide sleeves
+широкие рукава
 wife
 жена
 wind
@@ -1716,8 +2602,12 @@ wine
 вино
 wing
 крыло
+wings
+крылья
 winter
 зима
+winter clothes
+зимняя одежда
 wire
 проволока
 woman
@@ -1732,12 +2622,16 @@ worker
 работник
 world
 мир
+world war ii
+вторая мировая война
 wrap
 сворачивать
 wrestler
 борец
 wrestling
 борьба
+wrinkled skin
+морщинная кожа
 wrist
 запястье
 wristwatch
@@ -1746,3 +2640,5 @@ writing
 письмо
 yard
 площадка
+yellow shirt
+желтая рубашка

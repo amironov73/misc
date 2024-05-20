@@ -1,2 +1,4 @@
 requests
 spacy
+pymorphy2
+retry

@@ -15,9 +15,14 @@
 ass
 background
 boy
+closed mouth
+comic
+cowboy shot
+depth of field
 fine art parody
 foreground
 focus
+from side
 front
 girl
 greyscale
@@ -28,8 +33,13 @@ multiple boys
 multiple girls
 parody
 photo
+photo background
 real world location
 realistic
+scenery
 solo
+star (sky)
 style
 traditional media
+watermark
+web address
