@@ -1,0 +1,3 @@
+v700^a, if p(v700^g) then |, |v700^g else |, |v700^b fi,
+(if p(v799) then |; |v799^a, if p(v799^g) then |, |v799^g else |, |v799^b fi,  fi),
+v710^a,
