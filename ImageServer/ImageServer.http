@@ -1,0 +1,6 @@
+@ImageServer_HostAddress = http://localhost:5137
+
+GET {{ImageServer_HostAddress}}/scale?name=test.jpg&factor=0.5
+Accept: image/jpeg
+
+###

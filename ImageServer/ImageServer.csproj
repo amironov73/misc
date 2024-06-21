@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <InvariantGlobalization>true</InvariantGlobalization>
+        <PublishAot>false</PublishAot>
+    </PropertyGroup>
+
+    <!-- Хостинг в IIS -->
+    <PropertyGroup>
+        <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    </PropertyGroup>
+
+    <!-- Централизованное управление пакетами -->
+    <ItemGroup>
+        <PackageReference Include="SkiaSharp"/>
+    </ItemGroup>
+
+    <!-- Ссылки на проекты -->
+    <!-- ItemGroup>
+        <ProjectReference Include="..\..\Libs\AM.BetterCore\AM.BetterCore.csproj" />
+    </ItemGroup -->
+
+</Project>
