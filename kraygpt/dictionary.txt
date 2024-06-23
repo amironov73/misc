@@ -2331,23 +2331,23 @@ long sleeves
 look
 взгляд
 looking at another
-смотрю на другого
+взгляд направлен на другого человека
 looking at mirror
-смотреть в зеркало
+взгляд в зеркало
 looking at viewer
-посмотрите на зрителя
+взгляд направлен на камеру
 looking away
-отворачиваюсь
+взгляд в сторону
 looking back
-обращаясь назад
+взгляд назад
 looking down
-смотреть вниз
+взгляд направлен вниз
 looking outside
-смотрю в окно
+взгляд наружу
 looking to the side
-смотрит в сторону
+взгляд в сторону
 looking up
-смотрю вверх
+взгляд направлен вверх
 lot
 множество
 lotus
@@ -2371,17 +2371,17 @@ magic circle
 mahjong
 махджонг
 maid
-девушкапосыльная
+горничная
 maid apron
-поваренная накрахмаленная салфетка
+передник
 maid headdress
-девушкеслуге головной убор
+чепчик
 make
 поделка
 makeup
 макияж
 male child
-мужской ребенок
+мальчик
 male swimwear
 мужской купальный костюм
 male underwear
@@ -2389,7 +2389,7 @@ male underwear
 man
 человек
 manga (object)
-манга (объект)
+манга
 manly
 мужественно
 mannequin

@@ -15,10 +15,11 @@ from pathlib import Path
 import openai
 from dotenv import load_dotenv
 from openai import OpenAI
+from retry import retry
 
 
 # Путь, по которому расположены исходные файлы
-ROOT_PATH = 'E:\\Images\\FV\\fv15\\fv1507'
+ROOT_PATH = 'E:\\Images'
 
 
 class PhotoImage:
@@ -43,6 +44,8 @@ class PhotoImage:
         with io.open(text_file_name, 'r', encoding='utf-8') as f:
             self.caption_en = f.readline().strip()
             self.tags_en = f.readline().strip()
+            self.caption_ru = f.readline().strip()
+            self.tags_ru = f.readline().strip()
 
     def write(self) -> None:
         """
@@ -90,7 +93,8 @@ def encode_image(input_image: str) -> str:
         return base64.b64encode(image_file.read()).decode('utf-8')
 
 
-def recognize_image(input_image: str) -> 'openai.ChatCompletion':
+@retry(tries=3, delay=1, backoff=2)
+def recognize_image(input_image: str) -> openai.ChatCompletion:
     base64_image = encode_image(input_image)
     return client.chat.completions.create(
         model="gpt-4o",
@@ -99,7 +103,7 @@ def recognize_image(input_image: str) -> 'openai.ChatCompletion':
             {"role": "user",
              "content":
                  [
-                     {"type": "text", "text": "Очень кратко опиши, что изображено на фото"},
+                     {"type": "text", "text": "Очень кратко опиши фото"},
                      {"type": "image_url",
                       "image_url":
                           {
@@ -152,13 +156,18 @@ with io.open('dictionary.txt', 'r', encoding='utf-8') as file:
 all_images = find_all_images()  # все найденные по указанному пути картинки
 
 # обрабатываем найденные подписи к картинкам и сохраняем их
-with io.open('tags.txt', 'w', encoding='utf-8') as output:
+with io.open('tags.txt', 'a', encoding='utf-8') as output:
     for one in all_images:
         print(one.short_source)
+
+        if one.caption_ru:
+            print(" => Already captioned")
+            continue
+
         start_moment = datetime.now()  # для отслеживания времени исполнения
         one.tags_ru = translate_tags(one.tags_en)
         completion = recognize_image(one.full_source)
-        one.caption_ru = completion.choices[0].message.content
+        one.caption_ru = str(completion.choices[0].message.content).strip()
         elapsed = datetime.now() - start_moment
         one.write()
         print(' =>', elapsed)
