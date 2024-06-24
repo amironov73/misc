@@ -7,19 +7,20 @@
 
 import os
 import io
-import base64
 from datetime import datetime
 from typing import List
 from pathlib import Path
 
-import openai
 from dotenv import load_dotenv
 from openai import OpenAI
-from retry import retry
 
+from _common import recognize_image, get_caption
 
 # Путь, по которому расположены исходные файлы
 ROOT_PATH = 'E:\\Images'
+
+# Префикс, добавляемый к имени файла
+IMAGE_PATH_PREFIX = 'pic\\'
 
 
 class PhotoImage:
@@ -83,40 +84,6 @@ def find_all_images() -> List[PhotoImage]:
     return result
 
 
-def encode_image(input_image: str) -> str:
-    """
-    Кодируем картинку в BASE64.
-    :param input_image: Путь к картинке.
-    :return: Содержимое картинки в BASE64.
-    """
-    with open(input_image, "rb") as image_file:
-        return base64.b64encode(image_file.read()).decode('utf-8')
-
-
-@retry(tries=3, delay=1, backoff=2)
-def recognize_image(input_image: str) -> openai.ChatCompletion:
-    base64_image = encode_image(input_image)
-    return client.chat.completions.create(
-        model="gpt-4o",
-        max_tokens=100,
-        messages=[
-            {"role": "user",
-             "content":
-                 [
-                     {"type": "text", "text": "Очень кратко опиши фото"},
-                     {"type": "image_url",
-                      "image_url":
-                          {
-                              "detail": "low",
-                              "url": f"data:image/jpeg;base64,{base64_image}"
-                          }
-                      }
-                 ]
-             }
-        ]
-    )
-
-
 def translate_tags(tags_en: str) -> str:
     """
     Примитивный перевод тегов по словарю.
@@ -167,14 +134,15 @@ with io.open('tags.txt', 'a', encoding='utf-8') as output:
         start_moment = datetime.now()  # для отслеживания времени исполнения
         one.tags_ru = translate_tags(one.tags_en)
         completion = recognize_image(one.full_source)
-        one.caption_ru = str(completion.choices[0].message.content).strip()
+        one.caption_ru = get_caption(completion)
         elapsed = datetime.now() - start_moment
         one.write()
         print(' =>', elapsed)
         print(' =>', one.caption_ru)
         print(' =>', one.tags_ru)
 
-        output_line = (one.full_source.removeprefix(ROOT_PATH + '\\') + '\n' +
+        file_name = (IMAGE_PATH_PREFIX + one.full_source.removeprefix(ROOT_PATH + '\\')).lower()
+        output_line = (file_name + '\n' +
                        one.caption_en + '\n' +
                        one.tags_en + '\n' +
                        one.caption_ru + '\n' +
