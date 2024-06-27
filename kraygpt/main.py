@@ -11,10 +11,7 @@ from datetime import datetime
 from typing import List
 from pathlib import Path
 
-from dotenv import load_dotenv
-from openai import OpenAI
-
-from _common import recognize_image, get_caption
+from _common import initialize, recognize_image, get_caption
 
 # Путь, по которому расположены исходные файлы
 ROOT_PATH = 'E:\\Images'
@@ -101,14 +98,7 @@ def translate_tags(tags_en: str) -> str:
 #####################################################
 
 
-load_dotenv()
-
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-OPENAI_API_URL = os.getenv("OPENAI_API_URL")
-client = OpenAI(
-    api_key=OPENAI_API_KEY,
-    base_url=OPENAI_API_URL
-)
+initialize()
 
 # считываем словарь
 dictionary = {}

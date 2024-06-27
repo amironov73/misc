@@ -1,12 +1,25 @@
 import base64
 import io
 import os
+import os.path
+
 
 import openai
+from dotenv import load_dotenv
 from PIL import Image
 from retry import retry
 
-from main import client
+
+def initialize() -> None:
+    global client  # type: openai.OpenAI
+
+    load_dotenv()
+    openai_api_key = os.getenv("OPENAI_API_KEY")
+    openai_api_url = os.getenv("OPENAI_API_URL")
+    client = openai.OpenAI(
+        api_key=openai_api_key,
+        base_url=openai_api_url
+    )
 
 
 def encode_image(input_image: str) -> str:
@@ -36,8 +49,8 @@ def encode_image(input_image: str) -> str:
 
 
 @retry(tries=3, delay=1, backoff=2)
-def recognize_image(input_image: str) -> openai.ChatCompletion:
-    base64_image = encode_image(input_image)
+def recognize_image(input_image: str, need_encode: bool = True) -> openai.ChatCompletion:
+    base64_image = encode_image(input_image) if need_encode else input_image
     return client.chat.completions.create(
         model="gpt-4o",
         max_tokens=100,
