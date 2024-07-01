@@ -3,7 +3,6 @@ import io
 import os
 import os.path
 
-
 import openai
 from dotenv import load_dotenv
 from PIL import Image
@@ -51,7 +50,7 @@ def encode_image(input_image: str) -> str:
 @retry(tries=3, delay=1, backoff=2)
 def recognize_image(input_image: str, need_encode: bool = True,
                     question: str = "Очень кратко опиши фото",
-                    max_tokens: int =  100) -> openai.ChatCompletion:
+                    max_tokens: int = 100) -> openai.ChatCompletion:
     base64_image = encode_image(input_image) if need_encode else input_image
     return client.chat.completions.create(
         model="gpt-4o",
@@ -76,3 +75,14 @@ def recognize_image(input_image: str, need_encode: bool = True,
 
 def get_caption(completion: openai.Completion) -> str:
     return str(completion.choices[0].message.content).strip().replace('\n', ' ')
+
+
+def get_text_embedding(text: str) -> openai.Embedding:
+    """
+    Получение эмбеддинга для указанного текста.
+    """
+    response = client.embeddings.create(
+        model="text-embedding-ada-002",
+        input=text
+    )
+    return response.data[0].embedding

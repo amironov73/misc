@@ -3,3 +3,5 @@ python-dotenv
 retry
 pillow
 gradio==4.37.1
+numpy
+scipy
