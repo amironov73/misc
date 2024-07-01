@@ -49,16 +49,18 @@ def encode_image(input_image: str) -> str:
 
 
 @retry(tries=3, delay=1, backoff=2)
-def recognize_image(input_image: str, need_encode: bool = True) -> openai.ChatCompletion:
+def recognize_image(input_image: str, need_encode: bool = True,
+                    question: str = "Очень кратко опиши фото",
+                    max_tokens: int =  100) -> openai.ChatCompletion:
     base64_image = encode_image(input_image) if need_encode else input_image
     return client.chat.completions.create(
         model="gpt-4o",
-        max_tokens=100,
+        max_tokens=max_tokens,
         messages=[
             {"role": "user",
              "content":
                  [
-                     {"type": "text", "text": "Очень кратко опиши фото"},
+                     {"type": "text", "text": question},
                      {"type": "image_url",
                       "image_url":
                           {

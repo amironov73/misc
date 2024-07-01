@@ -13,12 +13,15 @@ import gradio as gr
 from _common import initialize, recognize_image, get_caption
 
 
-def handle_image(image):
+def handle_image(question, max_tokens, image):
+    """
+    Обработка нажатия кнопки "Отправить".
+    """
     # Конвертируем изображение в base64
     buffered = io.BytesIO()
     image.save(buffered, format="JPEG")
     img_str = base64.b64encode(buffered.getvalue()).decode("utf-8")
-    response = recognize_image(img_str, False)
+    response = recognize_image(img_str, False, question, max_tokens)
 
     # Извлекаем результат распознавания
     return get_caption(response)
@@ -29,7 +32,9 @@ initialize()
 # Создаем интерфейс Gradio
 interface = gr.Interface(
     fn=handle_image,
-    inputs=gr.Image(type="pil"),
+    inputs=[gr.Textbox(label="Вопрос", value="Очень кратко опиши фото", lines=2),
+            gr.Number(label="Максимальное количество токенов", value=100),
+        gr.Image(type="pil")],
     outputs=gr.Textbox(label="Сгенерированное описание изображения",
                        show_copy_button=True,
                        lines=15),
