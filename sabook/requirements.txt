@@ -1,0 +1,5 @@
+spacy
+pymorphy2
+python-dotenv
+requests
+urllib3
