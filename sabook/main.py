@@ -25,6 +25,16 @@ VOICE = 'Tur_24000'
 OUT_DIRECTORY = 'out'
 OUT_FILENAME = 'book.wav'
 
+# Таблица соответствия кратких обозначений голосов
+VOICE_TABLE = {
+    'N': 'Nec_24000',
+    'B': 'Bys_24000',
+    'M': 'May_24000',
+    'T': 'Tur_24000',
+    'O': 'Ost_24000',
+    'P': 'Pon_24000'
+}
+
 chunk_number = 0
 accumulated_text = ''
 
@@ -43,6 +53,24 @@ INPUT_FILE = args.input[0]
 VOICE = args.voice
 OUT_DIRECTORY = args.dir
 OUT_FILENAME = args.output
+access_token = ''
+
+
+def retrieve_access_token() -> None:
+    global access_token
+    access_token = requests.post('https://ngw.devices.sberbank.ru:9443/api/v2/oauth',
+                                 verify=False,
+                                 data='scope=SALUTE_SPEECH_PERS',
+                                 headers={'Authorization': f'Basic {auth_data}',
+                                          'RqUID': request_id,
+                                          'Content-Type': 'application/x-www-form-urlencoded'}).json()['access_token']
+
+
+def expand_voice(obj: re.Match) -> str:
+    """Расширение краткого обозначения голоса"""
+    voice = obj.group(1)
+    voice = VOICE_TABLE.get(voice, voice)
+    return f'<voice name="{voice}">{obj.group(2)}</voice>'
 
 
 def generate_audio(text: str) -> bytes:
@@ -54,12 +82,21 @@ def generate_audio(text: str) -> bytes:
     body = text
     if "<speak>" not in text:
         body = f"<speak>{text}</speak>"
-    answer = requests.post(f"https://smartspeech.sber.ru/rest/v1/text:synthesize?format=wav16&voice={VOICE}",
-                           verify=False,
-                           headers={'Authorization': f'Bearer {access_token}',
-                                    'Content-Type': 'application/ssml'},
-                           data=body)
-    return answer.content
+    while True:
+        answer = requests.post(f"https://smartspeech.sber.ru/rest/v1/text:synthesize?format=wav16&voice={VOICE}",
+                               verify=False,
+                               headers={'Authorization': f'Bearer {access_token}',
+                                        'Content-Type': 'application/ssml'},
+                               data=body)
+
+        if answer.status_code == 200:
+            return answer.content
+
+        if answer.status_code == 401:
+            retrieve_access_token()
+        else:
+            print(f"Error: {answer}")
+            exit(1)
 
 
 def flush_accumulated() -> None:
@@ -122,7 +159,17 @@ def expand_markup(text: str) -> str:
     :param text: Текст с разметкой.
     :return: Раскрытый текст.
     """
-    text = re.sub('\{\.}', '<break />', text) # паузы
+    text = re.sub(r'\{\.}', '<break />', text) # пауза
+    text = re.sub(r'\{@(\w+?)}(.+?){/}', expand_voice, text) # голос
+    text = re.sub(r'\{p(\w+?)}(.+?){/}', # тон
+                    r'<paint pitch="\1">\2</paint>', text)
+    text = re.sub(r'\{s(\w+?)}(.+?){/}', # скорость
+                    r'<paint speed="\1">\2</paint>', text)
+    text = re.sub(r'\{l(\w+?)}(.+?){/}', # громкость
+                    r'<paint loudness="\1">\2</paint>', text)
+    text = re.sub(r'\{b(\w+?)}(.+?){/}', # фоновые звуки
+                    r'<extra.background-audio src="\1">\2</extra.background-audio>',
+                    text)
     return text
 
 
@@ -146,15 +193,14 @@ ru.add_pipe('sentencizer')
 
 load_dotenv()
 auth_data = os.getenv('AUTH_DATA')
+if not auth_data:
+    print('AUTH_DATA not set')
+    exit(1)
+
 request_id = str(uuid.uuid4())
 
 urllib3.disable_warnings()
-access_token = requests.post('https://ngw.devices.sberbank.ru:9443/api/v2/oauth',
-                             verify=False,
-                             data='scope=SALUTE_SPEECH_PERS',
-                             headers={'Authorization': f'Basic {auth_data}',
-                                      'RqUID': request_id,
-                                      'Content-Type': 'application/x-www-form-urlencoded'}).json()['access_token']
+retrieve_access_token()
 
 # Построчно считываем файл.
 # Считаем каждую строку отдельным абзацем.
