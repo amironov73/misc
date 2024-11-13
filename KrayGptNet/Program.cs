@@ -7,6 +7,8 @@ using Microsoft.Extensions.Configuration;
 
 using Cocona;
 
+using LanguageDetection;
+
 using OpenAI;
 using OpenAI.Chat;
 
@@ -15,6 +17,9 @@ using Polly;
 using RestSharp;
 
 using static OpenAI.Chat.ChatMessageContentPart;
+
+var languageDetector = new LanguageDetector();
+languageDetector.AddLanguages ("ru", "en");
 
 var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json", optional: false)
@@ -221,7 +226,7 @@ void ProcessPicture
     Console.WriteLine();
 }
 
-static string[] SplitText
+string[] SplitText
     (
         string message
     )
@@ -229,13 +234,29 @@ static string[] SplitText
     var lines = message.Split ('\n')
         .Select (l => l.Trim())
         .Where (l => l.Length > 0)
-        .Where (l => l != "Sure!" && l != "Конечно!")
+        .Where (l => l != "Sure!" && l != "Certainly!" && l != "Конечно!")
         .ToArray();
 
-    return lines.Length switch
+    var russianLines = new List<string>();
+    var englishLines = new List<string>();
+
+    foreach (var line in lines)
     {
-        2 => lines,
-        > 2 => [lines[1], lines[^1]],
-        _ => []
-    };
+        var language = languageDetector.Detect (line);
+        switch (language)
+        {
+            case "ru":
+                russianLines.Add (line);
+                break;
+
+            case "en":
+                englishLines.Add (line);
+                break;
+        }
+    }
+
+    var russian = russianLines.MaxBy (one => one.Length) ?? string.Empty;
+    var english = englishLines.MaxBy (one => one.Length) ?? string.Empty;
+
+    return [russian, english];
 }
