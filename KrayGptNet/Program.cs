@@ -10,6 +10,8 @@ using Cocona;
 using OpenAI;
 using OpenAI.Chat;
 
+using Polly;
+
 using RestSharp;
 
 using static OpenAI.Chat.ChatMessageContentPart;
@@ -93,9 +95,18 @@ void ProcessFiles
         string[] files
     )
 {
+    var policy = Policy.Handle<Exception>()
+        .WaitAndRetry (10, retryAttempt
+                => TimeSpan.FromSeconds (Math.Pow (2, retryAttempt)),
+                onRetry: (exception, timeSpan) =>
+                    Console.WriteLine ($"Ошибка: {exception.Message}, ждем {timeSpan.Seconds} сек."));
+
     foreach (var file in files)
     {
-        ProcessPicture (chat, writer, folder, prefix, file);
+        policy.Execute
+            (
+                () => ProcessPicture (chat, writer, folder, prefix, file)
+            );
     }
 }
 
@@ -218,7 +229,7 @@ static string[] SplitText
     var lines = message.Split ('\n')
         .Select (l => l.Trim())
         .Where (l => l.Length > 0)
-        .Where (l => l != "Sure!")
+        .Where (l => l != "Sure!" && l != "Конечно!")
         .ToArray();
 
     return lines.Length switch
