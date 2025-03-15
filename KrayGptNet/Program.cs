@@ -1,4 +1,6 @@
-﻿using System.ClientModel;
+﻿#region Using directives
+
+using System.ClientModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text.Json;
@@ -17,6 +19,8 @@ using Polly;
 using RestSharp;
 
 using static OpenAI.Chat.ChatMessageContentPart;
+
+#endregion
 
 var languageDetector = new LanguageDetector();
 languageDetector.AddLanguages ("ru", "en");
