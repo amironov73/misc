@@ -8,16 +8,23 @@
 #define INPUT_FILE_NAME "llm_input.txt"
 #define OUTPUT_FILE_NAME "llm_output.txt"
 
+//====================================================================
+
 BOOL APIENTRY DllMain
     (
-            HMODULE hModule,
-            DWORD  ul_reason_for_call,
-            LPVOID lpReserved
+        HMODULE hModule,
+        DWORD  ul_reason_for_call,
+        LPVOID lpReserved
     )
 {
     NOT_USED (hModule);
     NOT_USED (ul_reason_for_call);
     NOT_USED (lpReserved);
+
+    /*
+        Никакой инициализации CRT здесь нет; только то,
+        что действительно требуется библиотеке.
+    */
 
     /*
         switch (ul_reason)
@@ -32,6 +39,19 @@ BOOL APIENTRY DllMain
      */
 
     return TRUE;
+}
+
+//====================================================================
+
+static void ClearMemory
+    (
+        char *ptr, int size
+    )
+{
+    while (size--)
+    {
+        *ptr++ = 0;
+    }
 }
 
 static BOOL ReadTextData
@@ -151,12 +171,12 @@ static BOOL RunProcess
 {
     STARTUPINFO startupinfo;
 
-    ZeroMemory (&startupinfo, sizeof (STARTUPINFO));
+    ClearMemory ((char*) &startupinfo, sizeof (STARTUPINFO));
     startupinfo.cb = sizeof (STARTUPINFO);
 
     PROCESS_INFORMATION processInfo;
 
-    ZeroMemory (&processInfo, sizeof (PROCESS_INFORMATION ));
+    ClearMemory ((char*) &processInfo, sizeof (PROCESS_INFORMATION ));
 
     BOOL success = CreateProcessA
         (
@@ -205,12 +225,15 @@ static BOOL RunProcess
     return TRUE;
 }
 
+//====================================================================
+
 /*
    &uf('+8llmthunk,Run,',v200^a),
    #,
    &uf('+8llmthunk,Run,',v910^a)
  */
 
+// экспортируемая функция, вызываемая АРМом.
 __declspec (dllexport)
 int __cdecl Run
     (
@@ -219,7 +242,7 @@ int __cdecl Run
         int size
     )
 {
-    ZeroMemory (buf2, size);
+    ClearMemory (buf2, size);
 
     if (!WriteTextData (INPUT_FILE_NAME, buf1))
     {
