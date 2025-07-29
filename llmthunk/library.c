@@ -8,6 +8,11 @@
 #define INPUT_FILE_NAME "llm_input.txt"
 #define OUTPUT_FILE_NAME "llm_output.txt"
 
+static char _workdir[256];
+static char _inputFileName[256];
+static char _outputFileName[256];
+static char _commandLineArguments[256];
+
 //====================================================================
 
 BOOL APIENTRY DllMain
@@ -103,14 +108,25 @@ static BOOL ReadTextData
 }
 
 static BOOL FileExists
-        (
-                const char *fileName
-        )
+    (
+        const char *fileName
+    )
 {
     DWORD dwAttrib = GetFileAttributesA (fileName);
 
     return (dwAttrib != INVALID_FILE_ATTRIBUTES &&
             !(dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
+}
+
+static BOOL DirectoryExists
+    (
+        const char *fileName
+    )
+{
+    DWORD dwAttrib = GetFileAttributesA (fileName);
+
+    return (dwAttrib != INVALID_FILE_ATTRIBUTES &&
+            (dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
 }
 
 static BOOL WriteTextData
@@ -166,7 +182,7 @@ static BOOL WriteTextData
 
 static BOOL RunProcess
     (
-        const char *executableName
+        const char *commandLine
     )
 {
     STARTUPINFO startupinfo;
@@ -181,7 +197,7 @@ static BOOL RunProcess
     BOOL success = CreateProcessA
         (
             NULL, // no module name (use command line)
-            (char*) executableName, // Command line
+            (char*) commandLine, // Command line
             NULL, // Process handle not inheritable
             NULL, // Thread handle not inheritable
             FALSE, // Set handle inheritance to FALSE
@@ -227,6 +243,137 @@ static BOOL RunProcess
 
 //====================================================================
 
+static const char* FindCharacter
+    (
+        const char *buffer,
+        char character
+    )
+{
+    while (*buffer)
+    {
+        if (*buffer == character)
+        {
+            return buffer;
+        }
+
+        buffer++;
+    }
+
+    return NULL;
+}
+
+static int CompareWithLength
+    (
+        const char *first,
+        const char *second,
+        int length
+    )
+{
+    int result = length > 0;
+
+    while (length > 0)
+    {
+        if (*first != *second)
+        {
+            result = FALSE;
+            break;
+        }
+
+        first++;
+        second++;
+        length--;
+    }
+
+    return result;
+}
+
+static void DetermineWorkDirectory
+    (
+        const char *buffer
+    )
+{
+    NOT_USED (buffer);
+
+    if (DirectoryExists ("C:\\irbiswrk"))
+    {
+        lstrcpyA (_workdir, "C:\\irbiswrk\\");
+        return;
+    }
+
+    ClearMemory (_workdir, sizeof (_workdir));
+
+    int length = (int) GetTempPathA (sizeof (_workdir) - 1, _workdir);
+    if (length >= sizeof (_workdir))
+    {
+        _workdir[0] = 0;
+        return;
+    }
+
+//    _workdir[0] = 0;
+//
+//    if (!CompareWithLength (buffer, "WORKDIR=", 8))
+//    {
+//        return;
+//    }
+//
+//    const char *end = FindCharacter (buffer, '\r');
+//    if (!end)
+//    {
+//        end = FindCharacter (buffer, '\n');
+//
+//        if (!end)
+//        {
+//            return;
+//        }
+//    }
+//
+//    int length = end - buffer - 8;
+//    lstrcpynA (_workdir, buffer + 8, length);
+//
+//    while (length > 0)
+//    {
+//        if (_workdir[length - 1] != ' ')
+//        {
+//            break;
+//        }
+//
+//        length--;
+//    }
+
+//    if (_workdir[length] != '\\')
+//    {
+//        _workdir[++length] = '\\';
+//        length++;
+//    }
+//
+//    _workdir[length] = 0;
+
+//    while (_workdir[0] == ' ')
+//    {
+//        lstrcpyA (_workdir, _workdir + 1);
+//    }
+}
+
+static void DetermineFileNames (void)
+{
+    // предполагается, что _workdir содержит конечный слэш
+
+    lstrcpyA (_inputFileName, _workdir);
+    lstrcatA (_inputFileName, INPUT_FILE_NAME);
+
+    lstrcpyA (_outputFileName, _workdir);
+    lstrcatA (_outputFileName, OUTPUT_FILE_NAME);
+
+    lstrcpyA (_commandLineArguments, EXECUTABLE_NAME);
+    lstrcatA (_commandLineArguments, " -i \"");
+    lstrcatA (_commandLineArguments, _inputFileName);
+    lstrcatA (_commandLineArguments, "\" -o \"");
+    lstrcatA (_commandLineArguments, _outputFileName);
+    lstrcatA (_commandLineArguments, "\"");
+}
+
+//====================================================================
+
 /*
    &uf('+8llmthunk,Run,',v200^a),
    #,
@@ -237,29 +384,32 @@ static BOOL RunProcess
 __declspec (dllexport)
 int __cdecl Run
     (
-        const char *buf1,
-        char *buf2,
-        int size
+        const char *inputBuffer,
+        char *outputBuffer,
+        int outputBufferSize
     )
 {
-    ClearMemory (buf2, size);
+    ClearMemory (outputBuffer, outputBufferSize);
 
-    if (!WriteTextData (INPUT_FILE_NAME, buf1))
+    DetermineWorkDirectory (inputBuffer);
+    DetermineFileNames();
+
+    if (!WriteTextData (_inputFileName, inputBuffer))
     {
         return 0;
     }
 
-    if (!FileExists (OUTPUT_FILE_NAME))
+    if (!FileExists (_outputFileName))
     {
-        DeleteFileA (OUTPUT_FILE_NAME);
+        DeleteFileA (_outputFileName);
     }
 
-    if (!RunProcess (EXECUTABLE_NAME))
+    if (!RunProcess (_commandLineArguments))
     {
         return 0;
     }
 
-    if (!ReadTextData (OUTPUT_FILE_NAME, buf2, size))
+    if (!ReadTextData (_outputFileName, outputBuffer, outputBufferSize))
     {
         return 0;
     }
