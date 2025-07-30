@@ -1,17 +1,26 @@
 #include <windows.h>
-
-#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
+#include <shlobj_core.h>
 
 #define NOT_USED(__x) ((void)__x)
 
 #define EXECUTABLE_NAME "llmcall.exe"
 #define INPUT_FILE_NAME "llm_input.txt"
 #define OUTPUT_FILE_NAME "llm_output.txt"
+#define MUTEX_NAME "KrayGemma"
 
-static char _workdir[256];
-static char _inputFileName[256];
-static char _outputFileName[256];
-static char _commandLineArguments[256];
+static char _workdir[MAX_PATH];
+static char _executable[MAX_PATH];
+static char _inputFileName[MAX_PATH];
+static char _outputFileName[MAX_PATH];
+static char _commandLineArguments[MAX_PATH];
+
+// #define USE_MUTEX // использовать мьютекс для ограничения одновременного запуска
+
+#ifdef USE_MUTEX
+
+static HANDLE hMutex;
+
+#endif
 
 //====================================================================
 
@@ -26,22 +35,45 @@ BOOL APIENTRY DllMain
     NOT_USED (ul_reason_for_call);
     NOT_USED (lpReserved);
 
-    /*
-        Никакой инициализации CRT здесь нет; только то,
-        что действительно требуется библиотеке.
-    */
+    switch (ul_reason_for_call)
+    {
+        case DLL_PROCESS_ATTACH:
 
-    /*
-        switch (ul_reason)
-        {
-            case DLL_PROCESS_ATTACH:
-            case DLL_THREAD_ATTACH:
-            case DLL_THREAD_DETACH:
-            case DLL_PROCESS_DETACH:
-                break;
-        }
+#ifdef USE_MUTEX
 
-     */
+            hMutex = CreateMutexA
+            (
+                NULL, // не наследуется потомками
+                FALSE, // не захватывается сразу при создании
+                MUTEX_NAME
+            );
+
+            if (hMutex == INVALID_HANDLE_VALUE)
+            {
+                return FALSE;
+            }
+
+#endif
+
+            break;
+
+        case DLL_THREAD_ATTACH:
+
+#ifdef USE_MUTEX
+
+            CloseHandle (hMutex);
+
+#endif
+
+            break;
+
+        case DLL_THREAD_DETACH:
+        case DLL_PROCESS_DETACH:
+            break;
+
+        default:
+            break;
+    }
 
     return TRUE;
 }
@@ -238,54 +270,10 @@ static BOOL RunProcess
     CloseHandle (processInfo.hProcess);
     CloseHandle (processInfo.hThread);
 
-    return TRUE;
+    return exitCode == 0;
 }
 
 //====================================================================
-
-static const char* FindCharacter
-    (
-        const char *buffer,
-        char character
-    )
-{
-    while (*buffer)
-    {
-        if (*buffer == character)
-        {
-            return buffer;
-        }
-
-        buffer++;
-    }
-
-    return NULL;
-}
-
-static int CompareWithLength
-    (
-        const char *first,
-        const char *second,
-        int length
-    )
-{
-    int result = length > 0;
-
-    while (length > 0)
-    {
-        if (*first != *second)
-        {
-            result = FALSE;
-            break;
-        }
-
-        first++;
-        second++;
-        length--;
-    }
-
-    return result;
-}
 
 static void DetermineWorkDirectory
     (
@@ -294,69 +282,47 @@ static void DetermineWorkDirectory
 {
     NOT_USED (buffer);
 
-    if (DirectoryExists ("C:\\irbiswrk"))
+    ClearMemory (_workdir, MAX_PATH);
+
+    // C:\Users\user\OneDrive\Документы
+    if (FAILED (SHGetFolderPathA
+        (
+            NULL, // window
+            CSIDL_MYDOCUMENTS,
+            NULL, // token
+            0, // flags
+            _workdir
+        )))
     {
-        lstrcpyA (_workdir, "C:\\irbiswrk\\");
-        return;
+        GetTempPathA (MAX_PATH, _workdir);
     }
 
-    ClearMemory (_workdir, sizeof (_workdir));
+    lstrcatA (_workdir, "\\IOGUNB");
 
-    int length = (int) GetTempPathA (sizeof (_workdir) - 1, _workdir);
-    if (length >= sizeof (_workdir))
+    if (!DirectoryExists (_workdir))
     {
-        _workdir[0] = 0;
-        return;
+        CreateDirectoryA
+            (
+                _workdir,
+                NULL // no security attributes
+            );
     }
 
-//    _workdir[0] = 0;
-//
-//    if (!CompareWithLength (buffer, "WORKDIR=", 8))
-//    {
-//        return;
-//    }
-//
-//    const char *end = FindCharacter (buffer, '\r');
-//    if (!end)
-//    {
-//        end = FindCharacter (buffer, '\n');
-//
-//        if (!end)
-//        {
-//            return;
-//        }
-//    }
-//
-//    int length = end - buffer - 8;
-//    lstrcpynA (_workdir, buffer + 8, length);
-//
-//    while (length > 0)
-//    {
-//        if (_workdir[length - 1] != ' ')
-//        {
-//            break;
-//        }
-//
-//        length--;
-//    }
-
-//    if (_workdir[length] != '\\')
-//    {
-//        _workdir[++length] = '\\';
-//        length++;
-//    }
-//
-//    _workdir[length] = 0;
-
-//    while (_workdir[0] == ' ')
-//    {
-//        lstrcpyA (_workdir, _workdir + 1);
-//    }
+    lstrcatA (_workdir, "\\");
 }
 
 static void DetermineFileNames (void)
 {
+    char candidate[MAX_PATH];
+
     // предполагается, что _workdir содержит конечный слэш
+
+    lstrcpyA (_executable, EXECUTABLE_NAME);
+    ClearMemory (candidate, MAX_PATH);
+    if (GetEnvironmentVariableA ("LLMCALL", candidate, MAX_PATH))
+    {
+        lstrcpyA (_executable, candidate);
+    }
 
     lstrcpyA (_inputFileName, _workdir);
     lstrcatA (_inputFileName, INPUT_FILE_NAME);
@@ -364,7 +330,7 @@ static void DetermineFileNames (void)
     lstrcpyA (_outputFileName, _workdir);
     lstrcatA (_outputFileName, OUTPUT_FILE_NAME);
 
-    lstrcpyA (_commandLineArguments, EXECUTABLE_NAME);
+    lstrcpyA (_commandLineArguments, _executable);
     lstrcatA (_commandLineArguments, " -i \"");
     lstrcatA (_commandLineArguments, _inputFileName);
     lstrcatA (_commandLineArguments, "\" -o \"");
@@ -375,12 +341,23 @@ static void DetermineFileNames (void)
 //====================================================================
 
 /*
-   &uf('+8llmthunk,Run,',v200^a),
-   #,
-   &uf('+8llmthunk,Run,',v910^a)
+   &uf('+8llmthunk,Run,Далеко ли до Луны?',#,'*****')
+
+   или
+
+   &uf('+8llmthunk,Run,',&uf('6promptaiforimages'))
+
  */
 
-// экспортируемая функция, вызываемая АРМом.
+// Экспортируемая функция, вызываемая АРМом.
+// inputBuffer – передаваемые данные (входные),
+// outputBuffer – возвращаемые данные (выходные),
+// outputBufferSize – размер выходного буфера (outputBuffer).
+// Как правило, размер выходного буфера составляет 32000 байт.
+// В ИРБИС64 данные передаются и возвращаются в UTF8.
+// Переводы строки стандартные для Windows: \r\n
+// Возвращаемое значение: 0 – нормальное завершение;
+// любое другое значение – ненормальное.
 __declspec (dllexport)
 int __cdecl Run
     (
@@ -391,28 +368,56 @@ int __cdecl Run
 {
     ClearMemory (outputBuffer, outputBufferSize);
 
+#ifdef USE_MUTEX
+
+    DWORD waitResult = WaitForSingleObject
+        (
+            hMutex,
+            0 // Задаёт таймаут в миллисекундах.
+            // Значение 0 означает, что функция немедленно вернёт результат,
+            // не ожидая освобождения мьютекса.
+        );
+
+    // Возможные результаты:
+    // * WAIT_OBJECT_0 — мьютекс успешно захвачен, можно выполнять критичные операции.
+    // * WAIT_TIMEOUT — мьютекс занят другим экземпляром, приложение отказывает в выполнении операций.
+    // * Другие значения указывают на ошибку, которую можно проверить через GetLastError().
+
+    if (waitResult != WAIT_OBJECT_0)
+    {
+        return 1;
+    }
+
+#endif
+
     DetermineWorkDirectory (inputBuffer);
     DetermineFileNames();
 
-    if (!WriteTextData (_inputFileName, inputBuffer))
-    {
-        return 0;
-    }
-
-    if (!FileExists (_outputFileName))
+    if (FileExists (_outputFileName))
     {
         DeleteFileA (_outputFileName);
     }
 
+    if (!WriteTextData (_inputFileName, inputBuffer))
+    {
+        return 1;
+    }
+
     if (!RunProcess (_commandLineArguments))
     {
-        return 0;
+        return 1;
     }
 
     if (!ReadTextData (_outputFileName, outputBuffer, outputBufferSize))
     {
-        return 0;
+        return 1;
     }
 
-    return 1;
+#ifdef USE_MUTEX
+
+    ReleaseMutex (hMutex);
+
+#endif
+
+    return 0;
 }
