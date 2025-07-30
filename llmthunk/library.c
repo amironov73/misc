@@ -340,6 +340,62 @@ static void DetermineFileNames (void)
 
 //====================================================================
 
+// Для тестирования передачи аргументов
+__declspec (dllexport)
+int __cdecl TestCdecl
+    (
+        const char *inputBuffer,
+        char *outputBuffer,
+        int outputBufferSize
+    )
+{
+    ClearMemory (outputBuffer, outputBufferSize);
+
+    lstrcpyA (outputBuffer, inputBuffer);
+    lstrcatA (outputBuffer, " -> ");
+    lstrcatA (outputBuffer, "CDECL");
+
+    return 0;
+}
+
+// Для тестирования передачи аргументов
+__declspec (dllexport)
+int __stdcall TestStdcall
+    (
+        const char *inputBuffer,
+        char *outputBuffer,
+        int outputBufferSize
+    )
+{
+    ClearMemory (outputBuffer, outputBufferSize);
+
+    lstrcpyA (outputBuffer, inputBuffer);
+    lstrcatA (outputBuffer, " -> ");
+    lstrcatA (outputBuffer, "STDCALL");
+
+    return 0;
+}
+
+// Для тестирования передачи аргументов
+__declspec (dllexport)
+int WINAPI TestWinapi
+    (
+        const char *inputBuffer,
+        char *outputBuffer,
+        int outputBufferSize
+    )
+{
+    ClearMemory (outputBuffer, outputBufferSize);
+
+    lstrcpyA (outputBuffer, inputBuffer);
+    lstrcatA (outputBuffer, " -> ");
+    lstrcatA (outputBuffer, "WINAPI");
+
+    return 0;
+}
+
+//====================================================================
+
 /*
 
    &uf('+8llmthunk,Bleep')
@@ -348,7 +404,7 @@ static void DetermineFileNames (void)
 
 // Чисто пошуметь в отладочных целях
 __declspec (dllexport)
-int Bleep
+int __cdecl Bleep
     (
         const char *inputBuffer,
         char *outputBuffer,
@@ -374,7 +430,7 @@ int Bleep
 
 // Вывод сообщения в стандартном окне
 __declspec (dllexport)
-int Show
+int __cdecl Show
     (
         const char *inputBuffer,
         char *outputBuffer,
