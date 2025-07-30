@@ -341,6 +341,88 @@ static void DetermineFileNames (void)
 //====================================================================
 
 /*
+
+   &uf('+8llmthunk,Bleep')
+
+ */
+
+// Чисто пошуметь в отладочных целях
+__declspec (dllexport)
+int Bleep
+    (
+        const char *inputBuffer,
+        char *outputBuffer,
+        int outputBufferSize
+    )
+{
+    ClearMemory (outputBuffer, outputBufferSize);
+
+    Beep (750, 300);
+    MessageBeep (0xFFFFFFFF); // A simple beep.
+    // If the sound card is not available, the sound is generated using the speaker.
+
+    return 0;
+}
+
+//====================================================================
+
+/*
+
+   &uf('+8llmthunk,Show,Всё пропало!')
+
+ */
+
+// Вывод сообщения в стандартном окне
+__declspec (dllexport)
+int Show
+    (
+        const char *inputBuffer,
+        char *outputBuffer,
+        int outputBufferSize
+    )
+{
+    ClearMemory (outputBuffer, outputBufferSize);
+
+    int utf8Length = lstrlenA (inputBuffer);
+    int wideLength = MultiByteToWideChar
+        (
+            CP_UTF8,
+            0,
+            inputBuffer,
+            utf8Length,
+            NULL,
+            0
+        );
+    int wideBufferSize = (wideLength + 1) * (int) sizeof (wchar_t);
+    wchar_t *wideBuffer = (wchar_t*) GlobalAlloc (GMEM_FIXED, wideBufferSize);
+    ClearMemory ((char*) wideBuffer, wideBufferSize);
+    MultiByteToWideChar
+        (
+            CP_UTF8,
+            0,
+            inputBuffer,
+            utf8Length,
+            wideBuffer,
+            wideLength
+        );
+
+    MessageBoxW
+        (
+            NULL, // hwnd
+            wideBuffer,
+            L"IRBIS64",
+            MB_ICONINFORMATION
+        );
+
+    GlobalFree (wideBuffer);
+
+    return 0;
+}
+
+
+//====================================================================
+
+/*
    &uf('+8llmthunk,Run,Далеко ли до Луны?',#,'*****')
 
    или
