@@ -243,6 +243,13 @@ static BOOL RunProcess
         );
     if (!success)
     {
+        char fileName[MAX_PATH];
+
+        ClearMemory (fileName, MAX_PATH);
+        lstrcpyA (fileName, _workdir);
+        lstrcatA (fileName, "cant_run.txt");
+        WriteTextData (fileName, commandLine);
+
         return FALSE;
     }
 
@@ -254,6 +261,13 @@ static BOOL RunProcess
 
     if (wait == WAIT_FAILED)
     {
+        char fileName[MAX_PATH];
+
+        ClearMemory (fileName, MAX_PATH);
+        lstrcpyA (fileName, _workdir);
+        lstrcatA (fileName, "wait_failed.txt");
+        WriteTextData (fileName, commandLine);
+
         CloseHandle (processInfo.hProcess);
         CloseHandle (processInfo.hThread);
 
@@ -263,6 +277,13 @@ static BOOL RunProcess
     DWORD exitCode;
     if (!GetExitCodeProcess (processInfo.hProcess, &exitCode))
     {
+        char fileName[MAX_PATH];
+
+        ClearMemory (fileName, MAX_PATH);
+        lstrcpyA (fileName, _workdir);
+        lstrcatA (fileName, "cant_get_exit_code.txt");
+        WriteTextData (fileName, commandLine);
+
         CloseHandle (processInfo.hProcess);
         CloseHandle (processInfo.hThread);
 
@@ -285,6 +306,12 @@ static void DetermineWorkDirectory
     NOT_USED (buffer);
 
     ClearMemory (_workdir, MAX_PATH);
+
+    if (DirectoryExists ("C:\\irbiswrk"))
+    {
+        lstrcpyA (_workdir, "C:\\irbiswrk\\");
+        return;
+    }
 
     // C:\Users\user\OneDrive\Документы
     if (FAILED (SHGetFolderPathA
@@ -583,3 +610,93 @@ int __cdecl Exec
 {
     return RunCore (inputBuffer, outputBuffer, outputBufferSize);
 }
+
+#pragma comment(linker, "/export:Debug=_RunDebug@12")
+int OUR_API RunDebug
+    (
+        const char *inputBuffer,
+        char *outputBuffer,
+        int outputBufferSize
+    )
+{
+    ClearMemory (outputBuffer, outputBufferSize);
+
+    DetermineWorkDirectory (inputBuffer);
+    DetermineFileNames();
+
+    if (FileExists (_outputFileName))
+    {
+        DeleteFileA (_outputFileName);
+    }
+
+    if (!WriteTextData (_inputFileName, inputBuffer))
+    {
+        lstrcpyA (outputBuffer, "File write failure");
+        return 1;
+    }
+
+    lstrcpyA (outputBuffer, "Debug success");
+
+    return 0;
+}
+
+static const char* lstrchrA
+    (
+        const char *text,
+        char chr
+    )
+{
+    while (*text)
+    {
+        if (*text == chr)
+        {
+            return text;
+        }
+
+        text++;
+    }
+
+    return NULL;
+}
+
+#pragma comment(linker, "/export:Write=_WriteText@12")
+int OUR_API WriteText
+    (
+        const char *inputBuffer,
+        char *outputBuffer,
+        int outputBufferSize
+    )
+{
+    ClearMemory (outputBuffer, outputBufferSize);
+
+    const char *comma = lstrchrA (inputBuffer, ',');
+    if (!comma)
+    {
+        return 1;
+    }
+
+    char fileName[MAX_PATH];
+
+    ClearMemory (fileName, MAX_PATH);
+    lstrcpynA (fileName, inputBuffer, comma - inputBuffer + 1);
+
+    WriteTextData (fileName, comma + 1);
+
+    return 0;
+}
+
+#pragma comment(linker, "/export:Cwd=_Cwd@12")
+int OUR_API Cwd
+        (
+                const char *inputBuffer,
+                char *outputBuffer,
+                int outputBufferSize
+        )
+{
+    ClearMemory (outputBuffer, outputBufferSize);
+
+    GetCurrentDirectoryA (outputBufferSize, outputBuffer);
+
+    return 0;
+}
+
