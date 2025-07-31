@@ -22,6 +22,8 @@ static HANDLE hMutex;
 
 #endif
 
+#define OUR_API __stdcall
+
 //====================================================================
 
 BOOL APIENTRY DllMain
@@ -359,7 +361,7 @@ int __cdecl TestCdecl
 }
 
 // Для тестирования передачи аргументов
-__declspec (dllexport)
+#pragma comment(linker, "/export:TestStdcall=_TestStdcall@12")
 int __stdcall TestStdcall
     (
         const char *inputBuffer,
@@ -377,7 +379,7 @@ int __stdcall TestStdcall
 }
 
 // Для тестирования передачи аргументов
-__declspec (dllexport)
+#pragma comment(linker, "/export:TestWinapi=_TestWinapi@12")
 int WINAPI TestWinapi
     (
         const char *inputBuffer,
@@ -403,8 +405,8 @@ int WINAPI TestWinapi
  */
 
 // Чисто пошуметь в отладочных целях
-__declspec (dllexport)
-int __cdecl Bleep
+#pragma comment(linker, "/export:Bleep=_Bleep@12")
+int OUR_API Bleep
     (
         const char *inputBuffer,
         char *outputBuffer,
@@ -429,8 +431,8 @@ int __cdecl Bleep
  */
 
 // Вывод сообщения в стандартном окне
-__declspec (dllexport)
-int __cdecl Show
+#pragma comment(linker, "/export:Show=_Show@12")
+int OUR_API Show
     (
         const char *inputBuffer,
         char *outputBuffer,
@@ -478,26 +480,7 @@ int __cdecl Show
 
 //====================================================================
 
-/*
-   &uf('+8llmthunk,Run,Далеко ли до Луны?',#,'*****')
-
-   или
-
-   &uf('+8llmthunk,Run,',&uf('6promptaiforimages'))
-
- */
-
-// Экспортируемая функция, вызываемая АРМом.
-// inputBuffer – передаваемые данные (входные),
-// outputBuffer – возвращаемые данные (выходные),
-// outputBufferSize – размер выходного буфера (outputBuffer).
-// Как правило, размер выходного буфера составляет 32000 байт.
-// В ИРБИС64 данные передаются и возвращаются в UTF8.
-// Переводы строки стандартные для Windows: \r\n
-// Возвращаемое значение: 0 – нормальное завершение;
-// любое другое значение – ненормальное.
-__declspec (dllexport)
-int __cdecl Run
+static int RunCore
     (
         const char *inputBuffer,
         char *outputBuffer,
@@ -558,4 +541,45 @@ int __cdecl Run
 #endif
 
     return 0;
+}
+
+/*
+   &uf('+8llmthunk,Run,Далеко ли до Луны?',#,'*****')
+
+   или
+
+   &uf('+8llmthunk,Run,',&uf('6promptaiforimages'))
+
+ */
+
+// Экспортируемая функция, вызываемая АРМом.
+// inputBuffer – передаваемые данные (входные),
+// outputBuffer – возвращаемые данные (выходные),
+// outputBufferSize – размер выходного буфера (outputBuffer).
+// Как правило, размер выходного буфера составляет 32000 байт.
+// В ИРБИС64 данные передаются и возвращаются в UTF8.
+// Переводы строки стандартные для Windows: \r\n
+// Возвращаемое значение: 0 – нормальное завершение;
+// любое другое значение – ненормальное.
+#pragma comment(linker, "/export:Run=_Run@12")
+int OUR_API Run
+    (
+        const char *inputBuffer,
+        char *outputBuffer,
+        int outputBufferSize
+    )
+{
+    return RunCore (inputBuffer, outputBuffer, outputBufferSize);
+}
+
+// то, же, что и Run, только CDECL
+__declspec(dllexport)
+int __cdecl Exec
+        (
+                const char *inputBuffer,
+                char *outputBuffer,
+                int outputBufferSize
+        )
+{
+    return RunCore (inputBuffer, outputBuffer, outputBufferSize);
 }
