@@ -458,6 +458,8 @@ int OUR_API Bleep
  */
 
 // Вывод сообщения в стандартном окне
+// Не использовать для форматов, отрабатывающих на сервере
+// Всё тупо зависнет
 #pragma comment(linker, "/export:Show=_Show@12")
 int OUR_API Show
     (
@@ -503,7 +505,6 @@ int OUR_API Show
 
     return 0;
 }
-
 
 //====================================================================
 
@@ -611,34 +612,7 @@ int __cdecl Exec
     return RunCore (inputBuffer, outputBuffer, outputBufferSize);
 }
 
-#pragma comment(linker, "/export:Debug=_RunDebug@12")
-int OUR_API RunDebug
-    (
-        const char *inputBuffer,
-        char *outputBuffer,
-        int outputBufferSize
-    )
-{
-    ClearMemory (outputBuffer, outputBufferSize);
-
-    DetermineWorkDirectory (inputBuffer);
-    DetermineFileNames();
-
-    if (FileExists (_outputFileName))
-    {
-        DeleteFileA (_outputFileName);
-    }
-
-    if (!WriteTextData (_inputFileName, inputBuffer))
-    {
-        lstrcpyA (outputBuffer, "File write failure");
-        return 1;
-    }
-
-    lstrcpyA (outputBuffer, "Debug success");
-
-    return 0;
-}
+//====================================================================
 
 static const char* lstrchrA
     (
@@ -659,6 +633,7 @@ static const char* lstrchrA
     return NULL;
 }
 
+// запись текста в файл
 #pragma comment(linker, "/export:Write=_WriteText@12")
 int OUR_API WriteText
     (
@@ -685,6 +660,7 @@ int OUR_API WriteText
     return 0;
 }
 
+// получение текущей директории
 #pragma comment(linker, "/export:Cwd=_Cwd@12")
 int OUR_API Cwd
         (
@@ -700,3 +676,36 @@ int OUR_API Cwd
     return 0;
 }
 
+// получение имени пользователя
+#pragma comment(linker, "/export:User=_GetUser@12")
+int OUR_API GetUser
+        (
+                const char *inputBuffer,
+                char *outputBuffer,
+                int outputBufferSize
+        )
+{
+    ClearMemory (outputBuffer, outputBufferSize);
+
+    DWORD size = outputBufferSize;
+    GetUserNameA (outputBuffer, &size);
+
+    return 0;
+}
+
+// получение имени машины
+#pragma comment(linker, "/export:Machine=_GetMachine@12")
+int OUR_API GetMachine
+        (
+                const char *inputBuffer,
+                char *outputBuffer,
+                int outputBufferSize
+        )
+{
+    ClearMemory (outputBuffer, outputBufferSize);
+
+    DWORD size = outputBufferSize;
+    GetComputerNameA (outputBuffer, &size);
+
+    return 0;
+}
