@@ -1,11 +1,17 @@
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+
 #include <windows.h>
 #include <shlobj_core.h>
+#include <Shlwapi.h>
+
+#pragma ide diagnostic ignored "ConstantParameter"
 
 #define NOT_USED(__x) ((void)__x)
 
-#define EXECUTABLE_NAME "llmcall.exe"
-#define INPUT_FILE_NAME "llm_input.txt"
-#define OUTPUT_FILE_NAME "llm_output.txt"
+#define DEFAULT_EXECUTABLE_NAME "llmcall.exe"
+#define DEFAULT_INPUT_FILE_NAME "llm_input.txt"
+#define DEFAULT_OUTPUT_FILE_NAME "llm_output.txt"
 #define MUTEX_NAME "KrayGemma"
 
 static char _workdir[MAX_PATH];
@@ -243,13 +249,6 @@ static BOOL RunProcess
         );
     if (!success)
     {
-        char fileName[MAX_PATH];
-
-        ClearMemory (fileName, MAX_PATH);
-        lstrcpyA (fileName, _workdir);
-        lstrcatA (fileName, "cant_run.txt");
-        WriteTextData (fileName, commandLine);
-
         return FALSE;
     }
 
@@ -261,13 +260,6 @@ static BOOL RunProcess
 
     if (wait == WAIT_FAILED)
     {
-        char fileName[MAX_PATH];
-
-        ClearMemory (fileName, MAX_PATH);
-        lstrcpyA (fileName, _workdir);
-        lstrcatA (fileName, "wait_failed.txt");
-        WriteTextData (fileName, commandLine);
-
         CloseHandle (processInfo.hProcess);
         CloseHandle (processInfo.hThread);
 
@@ -277,13 +269,6 @@ static BOOL RunProcess
     DWORD exitCode;
     if (!GetExitCodeProcess (processInfo.hProcess, &exitCode))
     {
-        char fileName[MAX_PATH];
-
-        ClearMemory (fileName, MAX_PATH);
-        lstrcpyA (fileName, _workdir);
-        lstrcatA (fileName, "cant_get_exit_code.txt");
-        WriteTextData (fileName, commandLine);
-
         CloseHandle (processInfo.hProcess);
         CloseHandle (processInfo.hThread);
 
@@ -296,36 +281,60 @@ static BOOL RunProcess
     return exitCode == 0;
 }
 
-//====================================================================
+// поиск начала строчки с заданным префиксом, например "MACHINE="
+static const char *FindBeginning
+    (
+        const char *buffer,
+        const char *prefix,
+        int prefixLength
+    )
+{
+    while (*buffer)
+    {
+        int found = 1;
+        for (int i = 0; i < prefixLength; i++)
+        {
+            if (buffer[i] != prefix[i])
+            {
+                found = 0;
+                break;
+            }
+        }
 
-static void DetermineWorkDirectory
+        if (found)
+        {
+            return buffer;
+        }
+
+        buffer++;
+    }
+
+    return NULL;
+}
+
+// поиск конца строки
+static const char *FindEnd
     (
         const char *buffer
     )
 {
-    NOT_USED (buffer);
-
-    ClearMemory (_workdir, MAX_PATH);
-
-    if (DirectoryExists ("C:\\irbiswrk"))
+    while (*buffer)
     {
-        lstrcpyA (_workdir, "C:\\irbiswrk\\");
-        return;
+        char chr = *buffer;
+        if (chr == '\r' || chr == '\n')
+        {
+            return buffer;
+        }
+
+        buffer++;
     }
 
-    // C:\Users\user\OneDrive\Документы
-    if (FAILED (SHGetFolderPathA
-        (
-            NULL, // window
-            CSIDL_MYDOCUMENTS,
-            NULL, // token
-            0, // flags
-            _workdir
-        )))
-    {
-        GetTempPathA (MAX_PATH, _workdir);
-    }
+    return NULL;
+}
 
+// создание вложенной директории "IOGUNB"
+static void CreateIogunbSubdir()
+{
     lstrcatA (_workdir, "\\IOGUNB");
 
     if (!DirectoryExists (_workdir))
@@ -340,24 +349,155 @@ static void DetermineWorkDirectory
     lstrcatA (_workdir, "\\");
 }
 
-static void DetermineFileNames (void)
+// определение, не клиентский ли АРМ нас загрузил
+static BOOL IsClient
+    (
+        const char *name
+    )
 {
+    return (BOOL)
+        (
+            (name[0] == 'C') || (name[0] == 'c') &&
+            (name[1] == 'I') || (name[1] == 'i') &&
+            (name[2] == 'R') || (name[2] == 'r') &&
+            (name[3] == 'B') || (name[3] == 'b') &&
+            (name[4] == 'I') || (name[4] == 'i') &&
+            (name[5] == 'S') || (name[5] == 's')
+        );
+}
+
+static char* GetFileName
+    (
+        char *fullPath
+    )
+{
+    char *candidate = fullPath;
+    for (char *ptr = fullPath; *ptr; ptr++)
+    {
+        if (*ptr == '\\' && ptr[1] != 0)
+        {
+            candidate = ptr + 1;
+        }
+    }
+
+    return candidate;
+}
+
+static const char* lstrchrA
+    (
+        const char *text,
+        char chr
+    )
+{
+    while (*text)
+    {
+        if (*text == chr)
+        {
+            return text;
+        }
+
+        text++;
+    }
+
+    return NULL;
+}
+
+static void SetupWorkDirectoryAndFiles
+    (
+        const char *buffer
+    )
+{
+    char mainModule[MAX_PATH];
     char candidate[MAX_PATH];
+    char guid[MAX_PATH];
+
+    NOT_USED (buffer);
+
+    ClearMemory (_workdir, MAX_PATH);
+    ClearMemory (_executable, MAX_PATH);
+    ClearMemory (mainModule, MAX_PATH);
+    ClearMemory (candidate, MAX_PATH);
+    ClearMemory (guid, MAX_PATH);
+
+    // получаем полный путь до программы, которая нас загрузила
+    GetModuleFileName (NULL, mainModule, MAX_PATH);
+    char *exeName = GetFileName (mainModule);
+    int dirLength = exeName - mainModule + 1;
+    lstrcpynA (_executable, mainModule, dirLength);
+    lstrcatA (_executable, DEFAULT_EXECUTABLE_NAME);
+
+    if (IsClient (exeName))
+    {
+        // C:\Users\user\OneDrive\Документы
+        SHGetFolderPathA
+            (
+                NULL, // window
+                CSIDL_MYDOCUMENTS,
+                NULL, // token
+                0, // flags
+                _workdir
+            );
+
+        // или GetTempPathA (MAX_PATH, _workdir);
+
+        PathAddBackslashA (_workdir);
+    }
+    else
+    {
+        lstrcpynA (_workdir, mainModule, dirLength);
+        lstrcatA (_workdir, "workdir\\");
+    }
+
+    CreateIogunbSubdir();
+
+    // GUID нужен, чтобы не запросы от разных пользователей не затирали друг друга
+    const char *beginning = FindBeginning (buffer, "GUID=", 5);
+    if (beginning)
+    {
+        beginning += 5;
+        const char *end = FindEnd (beginning);
+        if (end)
+        {
+            lstrcpynA (guid, beginning, end - beginning + 1);
+            return;
+        }
+    }
 
     // предполагается, что _workdir содержит конечный слэш
 
-    lstrcpyA (_executable, EXECUTABLE_NAME);
+    lstrcpyA (_executable, DEFAULT_EXECUTABLE_NAME);
     ClearMemory (candidate, MAX_PATH);
     if (GetEnvironmentVariableA ("LLMCALL", candidate, MAX_PATH))
     {
+        // переменная должна содержать полное имя EXE-файла
         lstrcpyA (_executable, candidate);
     }
 
+//    if (!FileExists (_executable))
+//    {
+//        // придумать, что делать, если исполняемый файл не найден
+//        lstrcpyA (_executable, DEFAULT_EXECUTABLE_NAME);
+//    }
+
     lstrcpyA (_inputFileName, _workdir);
-    lstrcatA (_inputFileName, INPUT_FILE_NAME);
+    lstrcatA (_inputFileName, DEFAULT_INPUT_FILE_NAME);
+    if (guid[0])
+    {
+        lstrcpyA (_outputFileName, _workdir);
+        lstrcatA (_outputFileName, "llm_input-");
+        lstrcatA (_outputFileName, guid);
+        lstrcatA (_outputFileName, ".txt");
+    }
 
     lstrcpyA (_outputFileName, _workdir);
-    lstrcatA (_outputFileName, OUTPUT_FILE_NAME);
+    lstrcatA (_outputFileName, DEFAULT_OUTPUT_FILE_NAME);
+    if (guid[0])
+    {
+        lstrcpyA (_outputFileName, _workdir);
+        lstrcatA (_outputFileName, "llm_output-");
+        lstrcatA (_outputFileName, guid);
+        lstrcatA (_outputFileName, ".txt");
+    }
 
     lstrcpyA (_commandLineArguments, _executable);
     lstrcatA (_commandLineArguments, " -i \"");
@@ -365,7 +505,20 @@ static void DetermineFileNames (void)
     lstrcatA (_commandLineArguments, "\" -o \"");
     lstrcatA (_commandLineArguments, _outputFileName);
     lstrcatA (_commandLineArguments, "\"");
+
 }
+
+//====================================================================
+
+// Экспортируемые функции, вызываемые АРМом.
+// inputBuffer – передаваемые данные (входные),
+// outputBuffer – возвращаемые данные (выходные),
+// outputBufferSize – размер выходного буфера (outputBuffer).
+// Как правило, размер выходного буфера составляет 32000 байт.
+// В ИРБИС64 данные передаются и возвращаются в UTF8.
+// Переводы строки стандартные для Windows: \r\n
+// Возвращаемое значение: 0 – нормальное завершение;
+// любое другое значение – ненормальное.
 
 //====================================================================
 
@@ -440,11 +593,14 @@ int OUR_API Bleep
         int outputBufferSize
     )
 {
+    NOT_USED (inputBuffer);
+
     ClearMemory (outputBuffer, outputBufferSize);
 
     Beep (750, 300);
     MessageBeep (0xFFFFFFFF); // A simple beep.
-    // If the sound card is not available, the sound is generated using the speaker.
+    // If the sound card is not available,
+    // the sound is generated using the speaker.
 
     return 0;
 }
@@ -508,7 +664,17 @@ int OUR_API Show
 
 //====================================================================
 
-static int RunCore
+/*
+   &uf('+8llmthunk,Run,Далеко ли до Луны?',#,'*****')
+
+   или
+
+   &uf('+8llmthunk,Run,',&uf('6promptaiforimages'))
+
+ */
+
+#pragma comment(linker, "/export:Run=_Run@12")
+int OUR_API Run
     (
         const char *inputBuffer,
         char *outputBuffer,
@@ -539,8 +705,7 @@ static int RunCore
 
 #endif
 
-    DetermineWorkDirectory (inputBuffer);
-    DetermineFileNames();
+    SetupWorkDirectoryAndFiles(inputBuffer);
 
     if (FileExists (_outputFileName))
     {
@@ -571,67 +736,7 @@ static int RunCore
     return 0;
 }
 
-/*
-   &uf('+8llmthunk,Run,Далеко ли до Луны?',#,'*****')
-
-   или
-
-   &uf('+8llmthunk,Run,',&uf('6promptaiforimages'))
-
- */
-
-// Экспортируемая функция, вызываемая АРМом.
-// inputBuffer – передаваемые данные (входные),
-// outputBuffer – возвращаемые данные (выходные),
-// outputBufferSize – размер выходного буфера (outputBuffer).
-// Как правило, размер выходного буфера составляет 32000 байт.
-// В ИРБИС64 данные передаются и возвращаются в UTF8.
-// Переводы строки стандартные для Windows: \r\n
-// Возвращаемое значение: 0 – нормальное завершение;
-// любое другое значение – ненормальное.
-#pragma comment(linker, "/export:Run=_Run@12")
-int OUR_API Run
-    (
-        const char *inputBuffer,
-        char *outputBuffer,
-        int outputBufferSize
-    )
-{
-    return RunCore (inputBuffer, outputBuffer, outputBufferSize);
-}
-
-// то, же, что и Run, только CDECL
-__declspec(dllexport)
-int __cdecl Exec
-        (
-                const char *inputBuffer,
-                char *outputBuffer,
-                int outputBufferSize
-        )
-{
-    return RunCore (inputBuffer, outputBuffer, outputBufferSize);
-}
-
 //====================================================================
-
-static const char* lstrchrA
-    (
-        const char *text,
-        char chr
-    )
-{
-    while (*text)
-    {
-        if (*text == chr)
-        {
-            return text;
-        }
-
-        text++;
-    }
-
-    return NULL;
-}
 
 // запись текста в файл
 #pragma comment(linker, "/export:Write=_WriteText@12")
@@ -663,11 +768,11 @@ int OUR_API WriteText
 // получение текущей директории
 #pragma comment(linker, "/export:Cwd=_Cwd@12")
 int OUR_API Cwd
-        (
-                const char *inputBuffer,
-                char *outputBuffer,
-                int outputBufferSize
-        )
+    (
+        const char *inputBuffer,
+        char *outputBuffer,
+        int outputBufferSize
+    )
 {
     ClearMemory (outputBuffer, outputBufferSize);
 
@@ -696,6 +801,63 @@ int OUR_API GetUser
 // получение имени машины
 #pragma comment(linker, "/export:Machine=_GetMachine@12")
 int OUR_API GetMachine
+    (
+        const char *inputBuffer,
+        char *outputBuffer,
+        int outputBufferSize
+    )
+{
+    ClearMemory (outputBuffer, outputBufferSize);
+
+    DWORD size = outputBufferSize;
+    GetComputerNameA (outputBuffer, &size);
+
+    return 0;
+}
+
+// получение рабочей папки, в которую мы положим входной и выходной файлы
+#pragma comment(linker, "/export:WorkDir=_GetWorkDir@12")
+int OUR_API GetWorkDir
+    (
+        const char *inputBuffer,
+        char *outputBuffer,
+        int outputBufferSize
+    )
+{
+    ClearMemory (outputBuffer, outputBufferSize);
+    SetupWorkDirectoryAndFiles(inputBuffer);
+    lstrcpyA (outputBuffer, _workdir);
+
+    return 0;
+}
+
+// получение имени исполняемого файла, который мы должны запустить
+#pragma comment(linker, "/export:Exe=_GetExe@12")
+int OUR_API GetExe
+    (
+        const char *inputBuffer,
+        char *outputBuffer,
+        int outputBufferSize
+    )
+{
+    ClearMemory (outputBuffer, outputBufferSize);
+    SetupWorkDirectoryAndFiles(inputBuffer);
+    SetupWorkDirectoryAndFiles (inputBuffer);
+    lstrcpyA (outputBuffer, _executable);
+
+    return 0;
+}
+
+/*
+
+    &uf('+8llmthunk,Run,Для чего нужно государство?',#,'*****')
+    &uf('+8llmthunk,Process')
+
+ */
+
+// получение имени исполняемого файла, в который загружена наша DLL
+#pragma comment(linker, "/export:Process=_GetProcess@12")
+int OUR_API GetProcess
         (
                 const char *inputBuffer,
                 char *outputBuffer,
@@ -704,8 +866,7 @@ int OUR_API GetMachine
 {
     ClearMemory (outputBuffer, outputBufferSize);
 
-    DWORD size = outputBufferSize;
-    GetComputerNameA (outputBuffer, &size);
+    GetModuleFileName (NULL, outputBuffer, outputBufferSize);
 
     return 0;
 }
