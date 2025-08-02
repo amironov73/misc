@@ -5,7 +5,10 @@
 #include <shlobj_core.h>
 #include <Shlwapi.h>
 
+#pragma ide diagnostic ignored "OCUnusedGlobalDeclarationInspection"
 #pragma ide diagnostic ignored "ConstantParameter"
+#pragma ide diagnostic ignored "bugprone-branch-clone"
+#pragma ide diagnostic ignored "bugprone-reserved-identifier"
 
 #define NOT_USED(__x) ((void)__x)
 
@@ -87,17 +90,6 @@ BOOL APIENTRY DllMain
 }
 
 //====================================================================
-
-static void ClearMemory
-    (
-        char *ptr, int size
-    )
-{
-    while (size--)
-    {
-        *ptr++ = 0;
-    }
-}
 
 static BOOL ReadTextData
     (
@@ -227,12 +219,12 @@ static BOOL RunProcess
 {
     STARTUPINFO startupinfo;
 
-    ClearMemory ((char*) &startupinfo, sizeof (STARTUPINFO));
+    SecureZeroMemory ((char*) &startupinfo, sizeof (STARTUPINFO));
     startupinfo.cb = sizeof (STARTUPINFO);
 
     PROCESS_INFORMATION processInfo;
 
-    ClearMemory ((char*) &processInfo, sizeof (PROCESS_INFORMATION ));
+    SecureZeroMemory ((char*) &processInfo, sizeof (PROCESS_INFORMATION ));
 
     BOOL success = CreateProcessA
         (
@@ -363,6 +355,17 @@ static BOOL IsClient
             (name[3] == 'B') || (name[3] == 'b') &&
             (name[4] == 'I') || (name[4] == 'i') &&
             (name[5] == 'S') || (name[5] == 's')
+        )
+        ||
+        (
+            (name[0] == 'I') || (name[0] == 'i') &&
+            (name[1] == 'R') || (name[1] == 'r') &&
+            (name[2] == 'B') || (name[2] == 'b') &&
+            (name[3] == 'I') || (name[3] == 'i') &&
+            (name[4] == 'S') || (name[4] == 's') &&
+            (name[5] == 'T') || (name[5] == 't') &&
+            (name[6] == 'A') || (name[6] == 'a') &&
+            (name[7] == 'B') || (name[7] == 'b')
         );
 }
 
@@ -411,13 +414,11 @@ static void SetupWorkDirectoryAndFiles
     char candidate[MAX_PATH];
     char guid[MAX_PATH];
 
-    NOT_USED (buffer);
-
-    ClearMemory (_workdir, MAX_PATH);
-    ClearMemory (_executable, MAX_PATH);
-    ClearMemory (mainModule, MAX_PATH);
-    ClearMemory (candidate, MAX_PATH);
-    ClearMemory (guid, MAX_PATH);
+    SecureZeroMemory (_workdir, MAX_PATH);
+    SecureZeroMemory (_executable, MAX_PATH);
+    SecureZeroMemory (mainModule, MAX_PATH);
+    SecureZeroMemory (candidate, MAX_PATH);
+    SecureZeroMemory (guid, MAX_PATH);
 
     // получаем полный путь до программы, которая нас загрузила
     GetModuleFileName (NULL, mainModule, MAX_PATH);
@@ -466,7 +467,6 @@ static void SetupWorkDirectoryAndFiles
     // предполагается, что _workdir содержит конечный слэш
 
     lstrcpyA (_executable, DEFAULT_EXECUTABLE_NAME);
-    ClearMemory (candidate, MAX_PATH);
     if (GetEnvironmentVariableA ("LLMCALL", candidate, MAX_PATH))
     {
         // переменная должна содержать полное имя EXE-файла
@@ -479,6 +479,7 @@ static void SetupWorkDirectoryAndFiles
 //        lstrcpyA (_executable, DEFAULT_EXECUTABLE_NAME);
 //    }
 
+    // имя входного файла
     lstrcpyA (_inputFileName, _workdir);
     lstrcatA (_inputFileName, DEFAULT_INPUT_FILE_NAME);
     if (guid[0])
@@ -489,6 +490,7 @@ static void SetupWorkDirectoryAndFiles
         lstrcatA (_outputFileName, ".txt");
     }
 
+    // имя выходного файла
     lstrcpyA (_outputFileName, _workdir);
     lstrcatA (_outputFileName, DEFAULT_OUTPUT_FILE_NAME);
     if (guid[0])
@@ -499,13 +501,13 @@ static void SetupWorkDirectoryAndFiles
         lstrcatA (_outputFileName, ".txt");
     }
 
+    // командная строка
     lstrcpyA (_commandLineArguments, _executable);
     lstrcatA (_commandLineArguments, " -i \"");
     lstrcatA (_commandLineArguments, _inputFileName);
     lstrcatA (_commandLineArguments, "\" -o \"");
     lstrcatA (_commandLineArguments, _outputFileName);
     lstrcatA (_commandLineArguments, "\"");
-
 }
 
 //====================================================================
@@ -531,7 +533,7 @@ int __cdecl TestCdecl
         int outputBufferSize
     )
 {
-    ClearMemory (outputBuffer, outputBufferSize);
+    SecureZeroMemory (outputBuffer, outputBufferSize);
 
     lstrcpyA (outputBuffer, inputBuffer);
     lstrcatA (outputBuffer, " -> ");
@@ -549,7 +551,7 @@ int __stdcall TestStdcall
         int outputBufferSize
     )
 {
-    ClearMemory (outputBuffer, outputBufferSize);
+    SecureZeroMemory (outputBuffer, outputBufferSize);
 
     lstrcpyA (outputBuffer, inputBuffer);
     lstrcatA (outputBuffer, " -> ");
@@ -567,7 +569,7 @@ int WINAPI TestWinapi
         int outputBufferSize
     )
 {
-    ClearMemory (outputBuffer, outputBufferSize);
+    SecureZeroMemory (outputBuffer, outputBufferSize);
 
     lstrcpyA (outputBuffer, inputBuffer);
     lstrcatA (outputBuffer, " -> ");
@@ -585,6 +587,7 @@ int WINAPI TestWinapi
  */
 
 // Чисто пошуметь в отладочных целях
+// На сервере, естественно, нас никто не услышит
 #pragma comment(linker, "/export:Bleep=_Bleep@12")
 int OUR_API Bleep
     (
@@ -595,7 +598,7 @@ int OUR_API Bleep
 {
     NOT_USED (inputBuffer);
 
-    ClearMemory (outputBuffer, outputBufferSize);
+    SecureZeroMemory (outputBuffer, outputBufferSize);
 
     Beep (750, 300);
     MessageBeep (0xFFFFFFFF); // A simple beep.
@@ -613,9 +616,9 @@ int OUR_API Bleep
 
  */
 
-// Вывод сообщения в стандартном окне
-// Не использовать для форматов, отрабатывающих на сервере
-// Всё тупо зависнет
+// Вывод сообщения в стандартном окне.
+// Не использовать для форматов, отрабатывающих на сервере.
+// Всё тупо зависнет.
 #pragma comment(linker, "/export:Show=_Show@12")
 int OUR_API Show
     (
@@ -624,7 +627,7 @@ int OUR_API Show
         int outputBufferSize
     )
 {
-    ClearMemory (outputBuffer, outputBufferSize);
+    SecureZeroMemory (outputBuffer, outputBufferSize);
 
     int utf8Length = lstrlenA (inputBuffer);
     int wideLength = MultiByteToWideChar
@@ -638,7 +641,7 @@ int OUR_API Show
         );
     int wideBufferSize = (wideLength + 1) * (int) sizeof (wchar_t);
     wchar_t *wideBuffer = (wchar_t*) GlobalAlloc (GMEM_FIXED, wideBufferSize);
-    ClearMemory ((char*) wideBuffer, wideBufferSize);
+    SecureZeroMemory ((char*) wideBuffer, wideBufferSize);
     MultiByteToWideChar
         (
             CP_UTF8,
@@ -681,7 +684,7 @@ int OUR_API Run
         int outputBufferSize
     )
 {
-    ClearMemory (outputBuffer, outputBufferSize);
+    SecureZeroMemory (outputBuffer, outputBufferSize);
 
 #ifdef USE_MUTEX
 
@@ -705,7 +708,7 @@ int OUR_API Run
 
 #endif
 
-    SetupWorkDirectoryAndFiles(inputBuffer);
+    SetupWorkDirectoryAndFiles (inputBuffer);
 
     if (FileExists (_outputFileName))
     {
@@ -747,7 +750,7 @@ int OUR_API WriteText
         int outputBufferSize
     )
 {
-    ClearMemory (outputBuffer, outputBufferSize);
+    SecureZeroMemory (outputBuffer, outputBufferSize);
 
     const char *comma = lstrchrA (inputBuffer, ',');
     if (!comma)
@@ -757,7 +760,7 @@ int OUR_API WriteText
 
     char fileName[MAX_PATH];
 
-    ClearMemory (fileName, MAX_PATH);
+    SecureZeroMemory (fileName, MAX_PATH);
     lstrcpynA (fileName, inputBuffer, comma - inputBuffer + 1);
 
     WriteTextData (fileName, comma + 1);
@@ -774,7 +777,9 @@ int OUR_API Cwd
         int outputBufferSize
     )
 {
-    ClearMemory (outputBuffer, outputBufferSize);
+    NOT_USED (inputBuffer);
+
+    SecureZeroMemory (outputBuffer, outputBufferSize);
 
     GetCurrentDirectoryA (outputBufferSize, outputBuffer);
 
@@ -784,13 +789,15 @@ int OUR_API Cwd
 // получение имени пользователя
 #pragma comment(linker, "/export:User=_GetUser@12")
 int OUR_API GetUser
-        (
-                const char *inputBuffer,
-                char *outputBuffer,
-                int outputBufferSize
-        )
+    (
+        const char *inputBuffer,
+        char *outputBuffer,
+        int outputBufferSize
+    )
 {
-    ClearMemory (outputBuffer, outputBufferSize);
+    NOT_USED (inputBuffer);
+
+    SecureZeroMemory (outputBuffer, outputBufferSize);
 
     DWORD size = outputBufferSize;
     GetUserNameA (outputBuffer, &size);
@@ -807,7 +814,9 @@ int OUR_API GetMachine
         int outputBufferSize
     )
 {
-    ClearMemory (outputBuffer, outputBufferSize);
+    NOT_USED (inputBuffer);
+
+    SecureZeroMemory (outputBuffer, outputBufferSize);
 
     DWORD size = outputBufferSize;
     GetComputerNameA (outputBuffer, &size);
@@ -824,8 +833,8 @@ int OUR_API GetWorkDir
         int outputBufferSize
     )
 {
-    ClearMemory (outputBuffer, outputBufferSize);
-    SetupWorkDirectoryAndFiles(inputBuffer);
+    SecureZeroMemory (outputBuffer, outputBufferSize);
+    SetupWorkDirectoryAndFiles (inputBuffer);
     lstrcpyA (outputBuffer, _workdir);
 
     return 0;
@@ -840,8 +849,7 @@ int OUR_API GetExe
         int outputBufferSize
     )
 {
-    ClearMemory (outputBuffer, outputBufferSize);
-    SetupWorkDirectoryAndFiles(inputBuffer);
+    SecureZeroMemory (outputBuffer, outputBufferSize);
     SetupWorkDirectoryAndFiles (inputBuffer);
     lstrcpyA (outputBuffer, _executable);
 
@@ -850,7 +858,6 @@ int OUR_API GetExe
 
 /*
 
-    &uf('+8llmthunk,Run,Для чего нужно государство?',#,'*****')
     &uf('+8llmthunk,Process')
 
  */
@@ -858,14 +865,15 @@ int OUR_API GetExe
 // получение имени исполняемого файла, в который загружена наша DLL
 #pragma comment(linker, "/export:Process=_GetProcess@12")
 int OUR_API GetProcess
-        (
-                const char *inputBuffer,
-                char *outputBuffer,
-                int outputBufferSize
-        )
+    (
+        const char *inputBuffer,
+        char *outputBuffer,
+        int outputBufferSize
+    )
 {
-    ClearMemory (outputBuffer, outputBufferSize);
+    NOT_USED (inputBuffer);
 
+    SecureZeroMemory (outputBuffer, outputBufferSize);
     GetModuleFileName (NULL, outputBuffer, outputBufferSize);
 
     return 0;
