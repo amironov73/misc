@@ -410,26 +410,41 @@ static void SetupWorkDirectoryAndFiles
         const char *buffer
     )
 {
+    // Первейшая наша задача - получить полный путь к рабочей директории.
+    // Главная проблема тут - DLL может выполняться как на клиенте,
+    // так и на сервере.
+    // Различить их можно, запросив полный путь до программы,
+    // которая нас загрузила. По ней становится ясно, под кем мы работаем.
+    // Вторая наша задача - найти полный путь до llmcall.exe
+
     char mainModule[MAX_PATH];
     char candidate[MAX_PATH];
     char guid[MAX_PATH];
+    char iniFile[MAX_PATH];
 
     SecureZeroMemory (_workdir, MAX_PATH);
     SecureZeroMemory (_executable, MAX_PATH);
     SecureZeroMemory (mainModule, MAX_PATH);
     SecureZeroMemory (candidate, MAX_PATH);
     SecureZeroMemory (guid, MAX_PATH);
+    SecureZeroMemory (iniFile, MAX_PATH);
 
     // получаем полный путь до программы, которая нас загрузила
     GetModuleFileName (NULL, mainModule, MAX_PATH);
     char *exeName = GetFileName (mainModule);
     int dirLength = exeName - mainModule + 1;
+
+    // llmcall.exe должен лежать рядом с главным модулем программы,
+    // в которую мы загружены
     lstrcpynA (_executable, mainModule, dirLength);
     lstrcatA (_executable, DEFAULT_EXECUTABLE_NAME);
 
     if (IsClient (exeName))
     {
+        // это клиент, значит, мы работаем в интерактивном режиме,
+        // у нас есть папка документов пользователя типа такой:
         // C:\Users\user\OneDrive\Документы
+
         SHGetFolderPathA
             (
                 NULL, // window
@@ -439,16 +454,32 @@ static void SetupWorkDirectoryAndFiles
                 _workdir
             );
 
-        // или GetTempPathA (MAX_PATH, _workdir);
-
-        PathAddBackslashA (_workdir);
+        // или можно попробовать GetTempPathA (MAX_PATH, _workdir);
     }
     else
     {
-        lstrcpynA (_workdir, mainModule, dirLength);
-        lstrcatA (_workdir, "workdir\\");
+        // это сервер, рядом с ним должен лежать файл irbis_server.ini,
+        // в секции Main которого есть параметр workdir,
+        // хранящий полный путь до рабочей директории
+
+        lstrcpyA (iniFile, mainModule);
+        PathRemoveFileSpecA (iniFile);
+        lstrcatA (iniFile, "irbis_server.ini");
+        GetPrivateProfileStringA
+            (
+                "Main", // section
+                "workdir", // key name
+                NULL, // default value
+                _workdir, // result
+                MAX_PATH, // size of result
+                iniFile // ini file name
+            );
     }
 
+    // на всякий случай добавляем обратный слэш
+    PathAddBackslashA (_workdir);
+
+    // и создаем папку IOGUNB, если ее еще не было
     CreateIogunbSubdir();
 
     // GUID нужен, чтобы не запросы от разных пользователей не затирали друг друга
@@ -464,9 +495,7 @@ static void SetupWorkDirectoryAndFiles
         }
     }
 
-    // предполагается, что _workdir содержит конечный слэш
-
-    lstrcpyA (_executable, DEFAULT_EXECUTABLE_NAME);
+    // в принципе, полный путь до llmcall.exe можно указать в переменной окружения
     if (GetEnvironmentVariableA ("LLMCALL", candidate, MAX_PATH))
     {
         // переменная должна содержать полное имя EXE-файла
@@ -475,9 +504,11 @@ static void SetupWorkDirectoryAndFiles
 
 //    if (!FileExists (_executable))
 //    {
-//        // придумать, что делать, если исполняемый файл не найден
+//        // придумать, что делать, если исполняемый файл llmcall.exe не найден
 //        lstrcpyA (_executable, DEFAULT_EXECUTABLE_NAME);
 //    }
+
+    // предполагается, что _workdir содержит конечный слэш
 
     // имя входного файла
     lstrcpyA (_inputFileName, _workdir);
