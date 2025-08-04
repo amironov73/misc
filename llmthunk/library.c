@@ -327,7 +327,7 @@ static const char *FindEnd
 // создание вложенной директории "IOGUNB"
 static void CreateIogunbSubdir()
 {
-    lstrcatA (_workdir, "\\IOGUNB");
+    lstrcatA (_workdir, "IOGUNB");
 
     if (!DirectoryExists (_workdir))
     {
@@ -462,18 +462,24 @@ static void SetupWorkDirectoryAndFiles
         // в секции Main которого есть параметр workdir,
         // хранящий полный путь до рабочей директории
 
-        lstrcpyA (iniFile, mainModule);
-        PathRemoveFileSpecA (iniFile);
-        lstrcatA (iniFile, "irbis_server.ini");
-        GetPrivateProfileStringA
-            (
-                "Main", // section
-                "workdir", // key name
-                NULL, // default value
-                _workdir, // result
-                MAX_PATH, // size of result
-                iniFile // ini file name
-            );
+        SecureZeroMemory (_workdir, MAX_PATH);
+        lstrcpyA (_workdir, mainModule);
+        PathRemoveFileSpecA (_workdir);
+        lstrcatA (_workdir, "\\workdir\\");
+
+//        lstrcpyA (iniFile, mainModule);
+//        PathRemoveFileSpecA (iniFile);
+//        PathAddBackslashA (_workdir);
+//        lstrcatA (iniFile, "irbis_server.ini");
+//        GetPrivateProfileStringA
+//            (
+//                "Main", // section
+//                "workdir", // key name
+//                NULL, // default value
+//                _workdir, // result
+//                MAX_PATH, // size of result
+//                iniFile // ini file name
+//            );
     }
 
     // на всякий случай добавляем обратный слэш
@@ -491,7 +497,6 @@ static void SetupWorkDirectoryAndFiles
         if (end)
         {
             lstrcpynA (guid, beginning, end - beginning + 1);
-            return;
         }
     }
 
@@ -515,10 +520,10 @@ static void SetupWorkDirectoryAndFiles
     lstrcatA (_inputFileName, DEFAULT_INPUT_FILE_NAME);
     if (guid[0])
     {
-        lstrcpyA (_outputFileName, _workdir);
-        lstrcatA (_outputFileName, "llm_input-");
-        lstrcatA (_outputFileName, guid);
-        lstrcatA (_outputFileName, ".txt");
+        lstrcpyA (_inputFileName, _workdir);
+        lstrcatA (_inputFileName, "llm_input-");
+        lstrcatA (_inputFileName, guid);
+        lstrcatA (_inputFileName, ".txt");
     }
 
     // имя выходного файла
