@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="KrayLib/KrayLib.csproj" />
+  <Project Path="LlmCall/LlmCall.csproj" />
+</Solution>
