@@ -78,6 +78,29 @@ public sealed partial class LlamaTalker
             }
         }
 
+        if (string.IsNullOrEmpty (input.GigaClientId))
+        {
+            input.GigaClientId = section["GigaClientId"];
+        }
+
+        if (string.IsNullOrEmpty (input.GigaClientSecret))
+        {
+            input.GigaClientSecret = section["GigaClientSecret"];
+        }
+
+        if (!string.IsNullOrEmpty (input.GigaClientId)
+            && !string.IsNullOrEmpty (input.GigaClientSecret))
+        {
+            LogAcquiringGigaChatAccessToken (logger);
+            var gigaClient = new GigaClient (input.GigaClientId, input.GigaClientSecret);
+            apiKey = gigaClient.AcquireAccessToken().GetAwaiter().GetResult();
+            LogGigaChatAccessTokenToken (logger, apiKey);
+            if (string.IsNullOrEmpty (apiKey))
+            {
+                throw new ApplicationException ("Could not acquire GigaChat access token");
+            }
+        }
+
         var uri = new Uri (endpoint);
         var credential = new ApiKeyCredential (apiKey);
         var clientOptions = new OpenAI.OpenAIClientOptions
@@ -258,6 +281,12 @@ public sealed partial class LlamaTalker
 
     [LoggerMessage (LogLevel.Debug, "Token usage: {Input}, {Output}, {Total}")]
     static partial void LogTokenUsage (ILogger logger, int input, int output, int total);
+
+    [LoggerMessage (LogLevel.Debug, "Acquiring GigaChat access token")]
+    static partial void LogAcquiringGigaChatAccessToken (ILogger logger);
+
+    [LoggerMessage (LogLevel.Debug, "GigaClient access token={Token}")]
+    static partial void LogGigaChatAccessTokenToken(ILogger logger, string? token);
 
     #endregion
 }

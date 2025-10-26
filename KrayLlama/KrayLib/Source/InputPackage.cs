@@ -91,6 +91,16 @@ public sealed class InputPackage
     /// </summary>
     public ChatImageDetailLevel? DetailLevel { get; set; }
 
+    /// <summary>
+    /// Идентификатор клиента GigaChat.
+    /// </summary>
+    public string? GigaClientId { get; set; }
+
+    /// <summary>
+    /// Секрет клиента GigaChat.
+    /// </summary>
+    public string? GigaClientSecret { get; set; }
+
     #endregion
 
     #region Private members
@@ -287,6 +297,14 @@ public sealed class InputPackage
                                 _ => null
                             };
                             continue;
+
+                        case "GIGA_CLIENT_ID":
+                            result.GigaClientId = ParseString (value);
+                            break;
+
+                        case "GIGA_CLIENT_SECRET":
+                            result.GigaClientSecret = ParseString (value);
+                            break;
 
                         default:
                             result.Prompt.Add (line);
