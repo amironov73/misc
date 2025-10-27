@@ -11,6 +11,7 @@
 #region Using directives
 
 using System.Text;
+using System.Text.Json.Nodes;
 
 using RestSharp;
 
@@ -30,6 +31,11 @@ public sealed class GigaClient
     /// </summary>
     public string? AccessToken => _accessToken;
 
+    /// <summary>
+    /// Когда токен станет невалидным.
+    /// </summary>
+    public DateTime ExpiresAt => _expiresAt;
+
     #endregion
 
     #region Construction
@@ -40,11 +46,10 @@ public sealed class GigaClient
     public GigaClient
         (
             string clientId,
-            string clientSecret,
-            string? baseUrl = null
+            string clientSecret
         )
     {
-        _baseUrl = baseUrl ?? "https://gigachat.devices.sberbank.ru/api/v1";
+        // _baseUrl = baseUrl ?? "https://gigachat.devices.sberbank.ru/api/v1";
         _clientId = clientId;
         _clientSecret = clientSecret;
     }
@@ -52,8 +57,6 @@ public sealed class GigaClient
     #endregion
 
     #region Private members
-
-    private readonly string _baseUrl;
 
     private readonly string _clientId;
 
@@ -67,7 +70,7 @@ public sealed class GigaClient
     {
         var options = new RestClientOptions
         {
-            Timeout = TimeSpan.MaxValue
+            // Timeout = TimeSpan.MaxValue
         };
         var client = new RestClient (options);
         var request = new RestRequest ("https://ngw.devices.sberbank.ru:9443/api/v2/oauth", Method.Post);
@@ -75,35 +78,48 @@ public sealed class GigaClient
         request.AddHeader (KnownHeaders.Accept, "application/json");
         request.AddHeader ("RqUID", Guid.NewGuid().ToString ("D"));
 
-        var authorization = $"{_clientId}.{_clientSecret}";
+        var authorization = $"{_clientId}:{_clientSecret}";
         authorization = "Basic " + Convert.ToBase64String (Encoding.ASCII.GetBytes (authorization));
         request.AddHeader (KnownHeaders.Authorization, authorization);
-        request.AddParameter("scope", "GIGACHAT_API_PERS");
+        request.AddParameter ("scope", "GIGACHAT_API_PERS");
 
-        var response = await client.ExecuteAsync<TokenInfo> (request);
-        _accessToken = response.Data?.AccessToken;
-        if (response.Data is not null)
+        var response = await client.ExecuteAsync (request);
+        var content = response.Content;
+        if (string.IsNullOrEmpty (content))
         {
-            _expiresAt = new DateTime (1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                .AddSeconds (response.Data.ExpiresAt).ToLocalTime();
+            throw new Exception ("Empty response returned");
+        }
+
+        var json = JsonNode.Parse (content);
+        _accessToken = json?["access_token"]?.ToString ();
+        var expiresAt = json?["expires_at"]?.ToString ();
+        if (!string.IsNullOrEmpty (expiresAt))
+        {
+            var milliseconds = long.Parse (expiresAt);
+            var dateTimeOffset = DateTimeOffset.FromUnixTimeMilliseconds (milliseconds);
+            _expiresAt = dateTimeOffset.LocalDateTime;
+        }
+        else
+        {
+            _expiresAt = DateTime.Now.AddMinutes (30);
         }
     }
 
-    private bool IsAccessTokenExpired() => string.IsNullOrEmpty (_accessToken)
-        || _expiresAt < DateTime.Now;
+    // private bool IsAccessTokenExpired() => string.IsNullOrEmpty (_accessToken)
+    //     || _expiresAt < DateTime.Now;
 
-    private async Task GetAccessTokenIfExpired()
-    {
-        if (IsAccessTokenExpired())
-        {
-            await GetAccessToken();
-        }
-
-        if (IsAccessTokenExpired())
-        {
-            throw new ApplicationException();
-        }
-    }
+    // private async Task GetAccessTokenIfExpired()
+    // {
+    //     if (IsAccessTokenExpired())
+    //     {
+    //         await GetAccessToken();
+    //     }
+    //
+    //     if (IsAccessTokenExpired())
+    //     {
+    //         throw new ApplicationException();
+    //     }
+    // }
 
     #endregion
 
