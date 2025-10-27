@@ -6,6 +6,7 @@
 #region Using directives
 
 using System.ClientModel;
+using System.ClientModel.Primitives;
 using System.Diagnostics;
 using System.Text.Json;
 
@@ -88,11 +89,15 @@ public sealed partial class LlamaTalker
             input.GigaClientSecret = section["GigaClientSecret"];
         }
 
+        // включен ли обход сертификатов Минцифры
+        var insecure = section["Insecure"] == "True";
+
         if (!string.IsNullOrEmpty (input.GigaClientId)
             && !string.IsNullOrEmpty (input.GigaClientSecret))
         {
             LogAcquiringGigaChatAccessToken (logger);
-            var gigaClient = new GigaClient (input.GigaClientId, input.GigaClientSecret);
+
+            var gigaClient = new GigaClient (input.GigaClientId, input.GigaClientSecret, insecure);
             apiKey = gigaClient.AcquireAccessToken().GetAwaiter().GetResult();
             LogGigaChatAccessTokenToken (logger, apiKey);
             if (string.IsNullOrEmpty (apiKey))
@@ -108,6 +113,23 @@ public sealed partial class LlamaTalker
             Endpoint = uri,
             NetworkTimeout = TimeSpan.FromSeconds (60) // TODO: parametrize
         };
+
+        if (insecure)
+        {
+            // для обхода сертификатов Минцифры просто отключаем проверку
+
+            // Создаём HttpClientHandler с отключённой проверкой SSL
+            var handler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback =
+                    HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+            };
+
+            // Создаём HttpClient с кастомным обработчиком
+            var httpClient = new HttpClient (handler);
+
+            clientOptions.Transport = new HttpClientPipelineTransport (httpClient);
+        }
 
         var imagePath = input.Images?[0];
         byte[]? imageBytes = null;

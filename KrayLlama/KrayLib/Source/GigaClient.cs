@@ -10,6 +10,7 @@
 
 #region Using directives
 
+using System.Security.Authentication;
 using System.Text;
 using System.Text.Json.Nodes;
 
@@ -46,12 +47,14 @@ public sealed class GigaClient
     public GigaClient
         (
             string clientId,
-            string clientSecret
+            string clientSecret,
+            bool insecure = false
         )
     {
         // _baseUrl = baseUrl ?? "https://gigachat.devices.sberbank.ru/api/v1";
         _clientId = clientId;
         _clientSecret = clientSecret;
+        _insecure = insecure;
     }
 
     #endregion
@@ -59,8 +62,8 @@ public sealed class GigaClient
     #region Private members
 
     private readonly string _clientId;
-
     private readonly string _clientSecret;
+    private readonly bool _insecure;
 
     private string? _accessToken;
 
@@ -68,10 +71,12 @@ public sealed class GigaClient
 
     private async Task GetAccessToken()
     {
-        var options = new RestClientOptions
+        var options = new RestClientOptions();
+        if (_insecure)
         {
-            // Timeout = TimeSpan.MaxValue
-        };
+            options.RemoteCertificateValidationCallback = (_, _, _, _) => true;
+        }
+
         var client = new RestClient (options);
         var request = new RestRequest ("https://ngw.devices.sberbank.ru:9443/api/v2/oauth", Method.Post);
         request.AddHeader (KnownHeaders.ContentType, "application/x-www-form-urlencoded");
@@ -84,10 +89,18 @@ public sealed class GigaClient
         request.AddParameter ("scope", "GIGACHAT_API_PERS");
 
         var response = await client.ExecuteAsync (request);
+        if (!response.IsSuccessful)
+        {
+            throw new ApplicationException
+                (
+                    $"Error getting token, status code: {response.StatusCode}: {response.ErrorMessage}"
+                );
+        }
+
         var content = response.Content;
         if (string.IsNullOrEmpty (content))
         {
-            throw new Exception ("Empty response returned");
+            throw new ApplicationException ("Empty response returned");
         }
 
         var json = JsonNode.Parse (content);

@@ -64,7 +64,12 @@ internal static class Program
         }
         catch (Exception ex)
         {
-            Console.WriteLine (ex.Message);
+            Console.WriteLine (ex);
+
+            // Делаем принудительный сброс буферов на диск
+            var factory = host.Services.GetRequiredService<ILoggerFactory>();
+            factory.Dispose();
+            Thread.Sleep (3000);
             return 1;
         }
 

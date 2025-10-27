@@ -6,6 +6,7 @@
 #region Using directives
 
 using System.Diagnostics;
+using System.Net;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -141,7 +142,7 @@ public sealed class KrayApplication
         catch (Exception ex)
         {
             _logger.LogError (ex, "An error occurred: {Message}", ex.Message);
-            Console.WriteLine (ex);
+            // Console.WriteLine (ex);
             throw;
         }
 
