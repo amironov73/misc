@@ -1,0 +1,9 @@
+LIB_SUMMARY_1.0 {
+  global:
+  # Экспортируем функцию под её родным именем
+  WriteHello;
+
+  local:
+  # Скрываем всё остальное (аналог -fvisibility=hidden)
+  *;
+};
