@@ -1,11 +1,48 @@
 #include <stdio.h>
 
+// Отключаем предупреждение о том, что большинство функций STB мы не использовали
+#pragma GCC diagnostic ignored "-Wunused-function"
+
 // Макрос STB_IMAGE_IMPLEMENTATION должен быть определен только в ОДНОМ .c файле
 #define STB_IMAGE_IMPLEMENTATION
+
+// Нам не нужно экспортировать функции STB
+#define STB_IMAGE_STATIC
+
 #include "../stb/stb_image.h"
 
+#ifdef _WIN32
+
+#define DLL_CALL __stdcall
+#define PIC_EXPORT
+#define PIC_NO_EXPORT
+
+#else
+
+#define DLL_CALL /* пусто */
+#define PIC_EXPORT __attribute__((visibility("default")))
+#define PIC_NO_EXPORT __attribute__((visibility("hidden")))
+
+#endif
+
+// Экспортированная функция
+PIC_EXPORT int DLL_CALL PicSize
+    (
+        const char *input,
+        char *output,
+        int size
+    )
+{
+    STBI_NOTUSED(input);
+    memset (output,0, size);
+    snprintf (output, size, "%s", "Привет, ИРБИС!");
+
+    return 0;
+}
+
 // Пример использования (для теста)
-int main(int argc, const char *argv[]) {
+PIC_NO_EXPORT int main(int argc, const char *argv[]) {
+
     if (argc != 2) {
         printf("USAGE: %s <path/to/image.png>\n", argv[0]);
         return 1;
@@ -15,11 +52,15 @@ int main(int argc, const char *argv[]) {
     const char *fileName = argv[1];
 
     if (stbi_info(fileName, &width, &height, &channels)) {
-        printf("File: %s | Width: %d, Height: %d\n",
-            fileName, width, height);
+
+        printf("File: %s | Width: %d, Height: %d, Channels: %d\n",
+            fileName, width, height, channels);
+
     } else {
+
         printf("ERROR\n");
         return 1;
+
     }
 
     return 0;
