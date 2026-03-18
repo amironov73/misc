@@ -9,7 +9,7 @@
 // Нам не нужно экспортировать функции STB
 #define STB_IMAGE_STATIC
 
-#include "../stb/stb_image.h"
+#include "stb/stb_image.h"
 
 #ifdef _WIN32
 
