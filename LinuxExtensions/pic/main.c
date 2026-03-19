@@ -26,7 +26,7 @@
 #endif
 
 // Экспортированная функция
-PIC_EXPORT int DLL_CALL PicSize
+PIC_EXPORT int DLL_CALL Size
     (
         const char *input,
         char *output,
@@ -35,7 +35,14 @@ PIC_EXPORT int DLL_CALL PicSize
 {
     STBI_NOTUSED(input);
     memset (output,0, size);
-    snprintf (output, size, "%s", "Привет, ИРБИС!");
+
+    int width = 0, height = 0, channels = 0;
+    if (stbi_info(input, &width, &height, &channels)) {
+        snprintf(output, size, "%d,%d", width, height);
+    }
+    else {
+        snprintf(output, size, "%s", "0,0");
+    }
 
     return 0;
 }
