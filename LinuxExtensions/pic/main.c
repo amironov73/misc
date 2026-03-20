@@ -36,8 +36,17 @@ PIC_EXPORT int DLL_CALL Size
     STBI_NOTUSED(input);
     memset (output,0, size);
 
+    char filename[1024], *ptr;
+    memset (filename, 0, sizeof (filename));
+    strncpy (filename, input, sizeof (filename));
+    for (ptr = filename; *ptr; ptr++) {
+        if (*ptr == '\\') {
+            *ptr = '/';
+        }
+    }
+
     int width = 0, height = 0, channels = 0;
-    if (stbi_info(input, &width, &height, &channels)) {
+    if (stbi_info(filename, &width, &height, &channels)) {
         snprintf(output, size, "%d,%d", width, height);
     }
     else {
