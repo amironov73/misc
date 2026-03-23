@@ -11,7 +11,9 @@ typedef struct {
 } command_t;
 
 static command_t commands[] = {
-  {"Count", Count }
+  { "Count", Count },
+  { "CountPages", CountPages },
+  { NULL, NULL }
 };
 
 static void call_command

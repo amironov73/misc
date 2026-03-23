@@ -23,3 +23,5 @@ EXPORT int DLL_CALL Count
     return 0;
 }
 
+// Создаем алиас
+EXPORT int CountPages() __attribute__((alias("Count")));

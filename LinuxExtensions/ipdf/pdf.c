@@ -47,13 +47,21 @@ NO_EXPORT int get_pdf_page_count
         const char *filename
     )
 {
-    FILE *f = fopen (filename, "rb");
+    char fixedname[1024], *ptr;
+    memset (fixedname, 0, sizeof (fixedname));
+    strncpy (fixedname, filename, sizeof (fixedname));
+    for (ptr = fixedname; *ptr; ptr++) {
+        if (*ptr == '\\') {
+            *ptr = '/';
+        }
+    }
+
+    FILE *f = fopen (fixedname, "rb");
     if (!f) {
         // printf ("Unable to open file %s\n", filename);
         return -1;
     }
 
-    // Прыгаем в конец файла (берем запас 4кб, где обычно лежат метаданные)
     fseek (f, 0, SEEK_END);
     long size = ftell (f);
     // printf ("File size: %ld\n", size);

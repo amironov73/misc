@@ -18,6 +18,7 @@
 #define NOT_USED(__x) ((void)__x)
 
 int Count (const char *input, char *output, int size);
+int CountPages (const char *input, char *output, int size);
 int get_pdf_page_count (const char *filename);
 
 #endif //IPDF_H
