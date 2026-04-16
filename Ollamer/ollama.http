@@ -1,0 +1,21 @@
+POST http://192.168.3.106:11434/api/chat
+Content-Type: application/json
+
+{
+  "model": "gemma4:e4b",
+  "stream": false,
+  "messages": [{ "role": "user", "content": "Hello!" }]
+}
+
+###
+
+POST http://192.168.3.106:11434/api/generate
+Content-Type: application/json
+
+{
+  "model": "gemma4:e4b",
+  "stream": false,
+  "prompt": "Why is the sky blue?"
+}
+
+###
