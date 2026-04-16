@@ -51,7 +51,19 @@ internal static class Program
                     config.SetMinimumLevel (LogLevel.Debug);
 
                     var logFileName = Path.Combine (outputDirectory, "llm_logs.txt");
-                    config.AddZLoggerFile (logFileName);
+                    config.AddZLoggerFile (logFileName, options =>
+                            {
+                                options.UsePlainTextFormatter (formatter =>
+                                {
+                                    formatter.SetPrefixFormatter
+                                        (
+                                            $"{0:local-longdate} [{1}] ",
+                                            (in template, in info) =>
+                                                template.Format (info.Timestamp, info.LogLevel)
+                                        );
+                                });
+                            }
+                        );
                 }
             );
 
