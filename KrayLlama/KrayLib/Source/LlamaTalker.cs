@@ -135,6 +135,7 @@ public sealed partial class LlamaTalker
         byte[]? imageBytes = null;
         if (!string.IsNullOrEmpty (imagePath))
         {
+            imagePath = imagePath.PathToUnix();
             imageBytes = File.ReadAllBytes (imagePath);
         }
 

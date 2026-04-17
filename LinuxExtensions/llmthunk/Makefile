@@ -4,7 +4,7 @@ CFLAGS = -fPIC -Wall -Os -flto -ffunction-sections -fdata-sections
 # LDFLAGS обычно пустой, если библиотеки стандартные
 LDFLAGS = -s
 # Библиотеки указываем здесь
-LDLIBS = -lm -flto -Wl,--gc-sections
+LDLIBS = -lm -luuid -flto -Wl,--gc-sections
 
 # Имена файлов
 EXE_TARGET = llmexe

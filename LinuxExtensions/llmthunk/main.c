@@ -10,7 +10,7 @@ typedef struct {
 } command_t;
 
 static command_t commands[] = {
-  {"test", Test }
+  {"Run", Run }
 };
 
 static void call_command

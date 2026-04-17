@@ -78,13 +78,13 @@ public sealed class AppParameters
             {
                 index++;
                 counter++;
-                InputFileName = args[index];
+                InputFileName = args[index].PathToUnix();
             }
             else if (args[index] == "--output" || args[index] == "-o")
             {
                 index++;
                 counter++;
-                OutputFileName = args[index];
+                OutputFileName = args[index].PathToUnix();
             }
             else if (args[index] == "--verbose" || args[index] == "-v")
             {
@@ -128,12 +128,12 @@ public sealed class AppParameters
                     switch (counter)
                     {
                         case 0:
-                            InputFileName = args[index];
+                            InputFileName = args[index].PathToUnix();
                             counter++;
                             break;
 
                         case 1:
-                            OutputFileName = args[index];
+                            OutputFileName = args[index].PathToUnix();
                             counter++;
                             break;
                     }
