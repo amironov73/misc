@@ -9,8 +9,8 @@ LDLIBS = -lm -luuid -flto -Wl,--gc-sections
 # Имена файлов
 EXE_TARGET = llmexe
 SO_TARGET  = libllm.so
-SRC = main.c library.c string.c path.c
-HEADERS = llm.h path.h
+SRC = main.c library.c
+HEADERS = llm.h
 OBJ = $(SRC:.c=.o)
 
 all: $(EXE_TARGET) $(SO_TARGET) check

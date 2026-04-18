@@ -72,7 +72,11 @@ EXPORT int DLL_CALL Run
     }
 
     if (outputFile != NULL) {
-        unused = fread (output, 1, size - 1, outputFile);
+        rc = fread (output, 1, size - 1, outputFile);
+        if (rc <= 0) {
+            return SayError (output, size, "Error reading output file");
+        }
+
         fclose (outputFile);
     }
 

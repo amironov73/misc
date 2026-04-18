@@ -4,9 +4,8 @@ project(llmthunk C)
 set(CMAKE_C_STANDARD 11)
 
 add_library(llmthunk SHARED library.c
-        path.c
-        path.h
         main.c
         llm.h
-        string.c
-        string.h)
+)
+
+target_link_libraries(${PROJECT_NAME} uuid)
