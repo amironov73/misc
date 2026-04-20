@@ -80,6 +80,8 @@ internal static class Program
 
             // Делаем принудительный сброс буферов на диск
             var factory = host.Services.GetRequiredService<ILoggerFactory>();
+            var logger =  factory.CreateLogger ("KrayGemma");
+            logger.LogError (ex, "Unhandled exception");
             factory.Dispose();
             Thread.Sleep (3000);
             return 1;
