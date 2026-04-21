@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/stat.h>
 #include <uuid/uuid.h>
 
 #include "llm.h"
-#include <string.h>
 
 NO_EXPORT int SayError
     (
@@ -14,9 +14,30 @@ NO_EXPORT int SayError
     )
 {
     memset (output, 0, output_size);
-    snprintf (output, output_size, message);
+    snprintf (output, output_size, "%s", message);
 
     return 1;
+}
+
+// Поворот слэшей для Unix
+EXPORT int DLL_CALL Slashes
+    (
+        const char *input,
+        char *output,
+        int size
+    )
+{
+    memset (output, 0, size);
+
+    char c;
+    while ((c = *input++) != 0 && size--) {
+        if (c == '\\') {
+            c = '/';
+        }
+        *output++ = c;
+    }
+
+    return 0;
 }
 
 // Экспортированная функция

@@ -17,6 +17,7 @@
 
 #define NOT_USED(__x) ((void)__x)
 
-int Run (const char *input, char *output, int size);
+int Slashes (const char *input, char *output, int size);
+int Run     (const char *input, char *output, int size);
 
 #endif //LLMTHUNK_H
