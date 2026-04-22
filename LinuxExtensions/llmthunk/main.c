@@ -11,6 +11,7 @@ typedef struct {
 
 static command_t commands[] = {
   {"Run", Run },
+  {"Test", Test },
   {"Slashes", Slashes }
 };
 
@@ -26,7 +27,7 @@ static void call_command
 
     int found = 0;
     for (int i = 0; commands[i].command; i++) {
-        if (strcmp(command, commands[i].command)) {
+        if (!strcmp(command, commands[i].command)) {
             found = 1;
 
             int size = 32 * 1024;
