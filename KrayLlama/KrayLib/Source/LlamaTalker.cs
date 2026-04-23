@@ -111,7 +111,7 @@ public sealed partial class LlamaTalker
         var clientOptions = new OpenAI.OpenAIClientOptions
         {
             Endpoint = uri,
-            NetworkTimeout = TimeSpan.FromSeconds (60) // TODO: parametrize
+            // NetworkTimeout = TimeSpan.FromMinutes (10) // TODO: parametrize
         };
 
         if (insecure)
@@ -162,11 +162,11 @@ public sealed partial class LlamaTalker
             parts.Add (imagePart);
         }
 
-        var userMessage = ChatMessage.CreateUserMessage (parts);
-        var conversation = new ChatMessage[]
-        {
-            userMessage
-        };
+        // var userMessage = ChatMessage.CreateUserMessage (parts);
+        // var conversation = new ChatMessage[]
+        // {
+        //     userMessage
+        // };
 
         var completionOptions = new ChatCompletionOptions
         {
@@ -179,6 +179,8 @@ public sealed partial class LlamaTalker
         LogCallingLlm (logger, input.Id);
         var moment = Stopwatch.GetTimestamp();
 
+#if NOTDEF
+
         var state = (conversation, completionOptions);
         var response = resilience.Execute
             (
@@ -189,6 +191,12 @@ public sealed partial class LlamaTalker
                     ),
                 state
             );
+
+        // var response = chat.CompleteChat
+        //     (
+        //         conversation,
+        //         completionOptions
+        //     );
 
         var elapsed = Stopwatch.GetElapsedTime (moment);
         var finishReason = response.Value.FinishReason;
@@ -211,6 +219,25 @@ public sealed partial class LlamaTalker
             Usage = usage,
             Duration = elapsed,
         };
+
+#else
+
+        var slapdash = new SlapdashClient (endpoint);
+        var request = new AiRequest
+        {
+            ApiKey = apiKey,
+            Model = modelId
+        };
+        request.Messages.Add (new PlainTextMessage
+        {
+            Role = "user",
+            Content = prompt
+        });
+        var response = slapdash.Execute (request);
+
+        var output = new OutputPackage();
+
+#endif
 
         return output;
     }

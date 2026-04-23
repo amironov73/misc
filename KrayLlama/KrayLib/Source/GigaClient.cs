@@ -10,7 +10,6 @@
 
 #region Using directives
 
-using System.Security.Authentication;
 using System.Text;
 using System.Text.Json.Nodes;
 

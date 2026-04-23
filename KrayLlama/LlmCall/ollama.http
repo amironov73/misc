@@ -1,0 +1,16 @@
+﻿POST http://192.168.3.106:11434/v1/chat/completions
+Authorization: Bearer OLLAMA
+Content-Type: application/json
+
+{
+  "model": "gemma4:26b",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Hello!"
+    }
+  ],
+  "stream": false
+}
+
+###
