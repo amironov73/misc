@@ -23,8 +23,10 @@ namespace KrayLib;
 /// Для Native AOT.
 /// </summary>
 [JsonSerializable (typeof (AiRequest))]
+[JsonSerializable (typeof (AiResponse))]
 [JsonSerializable (typeof (ChatMessage))]
-[JsonSerializable (typeof (PlainTextMessage))]
+[JsonSerializable (typeof (Choice))]
+[JsonSerializable (typeof (Usage))]
 public sealed partial /* нельзя убирать partial! */
     class KrayJsonSerializerContext
     : JsonSerializerContext

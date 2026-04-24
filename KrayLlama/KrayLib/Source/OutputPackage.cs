@@ -24,9 +24,9 @@ public sealed class OutputPackage
 
     public TimeSpan Duration { get; set; }
 
-    public ChatFinishReason FinishReason { get; set; }
+    public string? FinishReason { get; set; }
 
-    public ChatTokenUsage? Usage { get; set; }
+    public Usage? Usage { get; set; }
 
     #endregion
 

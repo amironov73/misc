@@ -194,7 +194,7 @@ public sealed class KrayApplication
 
         var usage = output.Usage!;
         Console.WriteLine ($"{input.SerialNumber}: {input.Id}: {output.Duration}");
-        Console.WriteLine ($"  {usage.InputTokenCount}, {usage.OutputTokenCount}, {usage.TotalTokenCount}");
+        Console.WriteLine ($"  {usage}");
         Console.WriteLine ($"  {input.GetExceprpt()}");
         Console.WriteLine ($"  {output.GetExceprpt()}");
         Console.WriteLine();

@@ -9,6 +9,7 @@ using System.ClientModel;
 using System.ClientModel.Primitives;
 using System.Diagnostics;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -168,13 +169,13 @@ public sealed partial class LlamaTalker
         //     userMessage
         // };
 
-        var completionOptions = new ChatCompletionOptions
-        {
-            StoredOutputEnabled = false,
-            TopP = input.TopP,
-            Temperature = input.Temperature,
-            MaxOutputTokenCount = input.MaxOutputTokens,
-        };
+        // var completionOptions = new ChatCompletionOptions
+        // {
+        //     StoredOutputEnabled = false,
+        //     TopP = input.TopP,
+        //     Temperature = input.Temperature,
+        //     MaxOutputTokenCount = input.MaxOutputTokens,
+        // };
 
         LogCallingLlm (logger, input.Id);
         var moment = Stopwatch.GetTimestamp();
@@ -228,14 +229,28 @@ public sealed partial class LlamaTalker
             ApiKey = apiKey,
             Model = modelId
         };
-        request.Messages.Add (new PlainTextMessage
-        {
-            Role = "user",
-            Content = prompt
-        });
-        var response = slapdash.Execute (request);
 
-        var output = new OutputPackage();
+        var message = imageBytes is null
+            ? ChatMessage.BuildTextMessage ("user", prompt)
+            : ChatMessage.BuildTextAndImage
+                (
+                    "user",
+                    prompt,
+                    "data:image/jpeg;base64," + Convert.ToBase64String (imageBytes)
+                );
+
+        request.Messages.Add (message);
+        var response = slapdash.Execute (request);
+        var elapsed = Stopwatch.GetElapsedTime (moment);
+
+        var output = new OutputPackage
+        {
+            Message = response?.Choices?[0].Message?.Content?.ToString(),
+            // Refusal = response.Value.Refusal,
+            FinishReason = response?.Choices?[0].FinishReason,
+            Usage = response?.Usage,
+            Duration = elapsed
+        };
 
 #endif
 

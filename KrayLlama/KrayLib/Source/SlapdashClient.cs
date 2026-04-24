@@ -45,7 +45,7 @@ public sealed class SlapdashClient
 
     #region Public methods
 
-    public RestResponse Execute
+    public AiResponse? Execute
         (
             AiRequest prompt
         )
@@ -68,7 +68,9 @@ public sealed class SlapdashClient
             request.AddHeader ("Authorization", "Bearer " + prompt.ApiKey);
         }
 
-        var result = restClient.Execute (request);
+        var response = restClient.Execute<AiResponse> (request);
+        var result = response.Data;
+
         return result;
     }
 
