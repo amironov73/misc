@@ -3,6 +3,7 @@
 
 // ReSharper disable CheckNamespace
 // ReSharper disable CommentTypo
+// ReSharper disable MemberCanBePrivate.Global
 
 /* SlapdashClient.cs - клиент для OpenAI
  * Ars Magna project
@@ -52,7 +53,8 @@ public sealed class SlapdashClient
     {
         var options = new RestClientOptions
         {
-            BaseUrl = new Uri (Endpoint)
+            BaseUrl = new Uri (Endpoint),
+            Timeout = TimeSpan.FromMinutes (10)
         };
         var restClient = new RestClient
             (

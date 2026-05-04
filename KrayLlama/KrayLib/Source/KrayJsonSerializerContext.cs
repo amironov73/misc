@@ -26,6 +26,7 @@ namespace KrayLib;
 [JsonSerializable (typeof (AiResponse))]
 [JsonSerializable (typeof (ChatMessage))]
 [JsonSerializable (typeof (Choice))]
+[JsonSerializable (typeof (OllamaOptions))]
 [JsonSerializable (typeof (Usage))]
 public sealed partial /* нельзя убирать partial! */
     class KrayJsonSerializerContext

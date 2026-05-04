@@ -5,18 +5,11 @@
 
 #region Using directives
 
-using System.ClientModel;
-using System.ClientModel.Primitives;
 using System.Diagnostics;
 using System.Text.Json;
-using System.Text.Json.Nodes;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-
-using OpenAI.Chat;
-
-using Polly;
 
 using RestSharp;
 
@@ -32,8 +25,7 @@ namespace KrayLib;
 public sealed partial class LlamaTalker
     (
         ILogger logger,
-        IConfiguration configuration,
-        ResiliencePipeline resilience
+        IConfiguration configuration
     )
 {
     #region Public methods
@@ -80,58 +72,6 @@ public sealed partial class LlamaTalker
             }
         }
 
-        if (string.IsNullOrEmpty (input.GigaClientId))
-        {
-            input.GigaClientId = section["GigaClientId"];
-        }
-
-        if (string.IsNullOrEmpty (input.GigaClientSecret))
-        {
-            input.GigaClientSecret = section["GigaClientSecret"];
-        }
-
-        // включен ли обход сертификатов Минцифры
-        var insecure = section["Insecure"] == "True";
-
-        if (!string.IsNullOrEmpty (input.GigaClientId)
-            && !string.IsNullOrEmpty (input.GigaClientSecret))
-        {
-            LogAcquiringGigaChatAccessToken (logger);
-
-            var gigaClient = new GigaClient (input.GigaClientId, input.GigaClientSecret, insecure);
-            apiKey = gigaClient.AcquireAccessToken().GetAwaiter().GetResult();
-            LogGigaChatAccessTokenToken (logger, apiKey);
-            if (string.IsNullOrEmpty (apiKey))
-            {
-                throw new ApplicationException ("Could not acquire GigaChat access token");
-            }
-        }
-
-        var uri = new Uri (endpoint);
-        var credential = new ApiKeyCredential (apiKey);
-        var clientOptions = new OpenAI.OpenAIClientOptions
-        {
-            Endpoint = uri,
-            // NetworkTimeout = TimeSpan.FromMinutes (10) // TODO: parametrize
-        };
-
-        if (insecure)
-        {
-            // для обхода сертификатов Минцифры просто отключаем проверку
-
-            // Создаём HttpClientHandler с отключённой проверкой SSL
-            var handler = new HttpClientHandler
-            {
-                ServerCertificateCustomValidationCallback =
-                    HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-            };
-
-            // Создаём HttpClient с кастомным обработчиком
-            var httpClient = new HttpClient (handler);
-
-            clientOptions.Transport = new HttpClientPipelineTransport (httpClient);
-        }
-
         var imagePath = input.Images?[0];
         byte[]? imageBytes = null;
         if (!string.IsNullOrEmpty (imagePath))
@@ -140,94 +80,28 @@ public sealed partial class LlamaTalker
             imageBytes = File.ReadAllBytes (imagePath);
         }
 
-        var client = new OpenAI.OpenAIClient (credential, clientOptions);
-        var chat = client.GetChatClient (modelId);
-
         var prompt = string
             .Join (Environment.NewLine, input.Prompt)
             .Trim();
 
-        var parts = new List<ChatMessageContentPart>
-        {
-            ChatMessageContentPart.CreateTextPart (prompt)
-        };
-
-        if (imageBytes is not null)
-        {
-            var imagePart = ChatMessageContentPart.CreateImagePart
-                (
-                    new BinaryData (imageBytes),
-                    System.Net.Mime.MediaTypeNames.Image.Jpeg,
-                    input.DetailLevel
-                );
-            parts.Add (imagePart);
-        }
-
-        // var userMessage = ChatMessage.CreateUserMessage (parts);
-        // var conversation = new ChatMessage[]
-        // {
-        //     userMessage
-        // };
-
-        // var completionOptions = new ChatCompletionOptions
-        // {
-        //     StoredOutputEnabled = false,
-        //     TopP = input.TopP,
-        //     Temperature = input.Temperature,
-        //     MaxOutputTokenCount = input.MaxOutputTokens,
-        // };
-
         LogCallingLlm (logger, input.Id);
         var moment = Stopwatch.GetTimestamp();
-
-#if NOTDEF
-
-        var state = (conversation, completionOptions);
-        var response = resilience.Execute
-            (
-                the => chat.CompleteChat
-                    (
-                        the.conversation,
-                        the.completionOptions
-                    ),
-                state
-            );
-
-        // var response = chat.CompleteChat
-        //     (
-        //         conversation,
-        //         completionOptions
-        //     );
-
-        var elapsed = Stopwatch.GetElapsedTime (moment);
-        var finishReason = response.Value.FinishReason;
-        var usage = response.Value.Usage;
-        LogElapsedTime (logger, elapsed);
-        LogFinishReason (logger, finishReason);
-        LogTokenUsage
-            (
-                logger,
-                usage.InputTokenCount,
-                usage.OutputTokenCount,
-                usage.TotalTokenCount
-            );
-
-        var output = new OutputPackage
-        {
-            Message = response.Value.Content[0].Text,
-            Refusal = response.Value.Refusal,
-            FinishReason = finishReason,
-            Usage = usage,
-            Duration = elapsed,
-        };
-
-#else
-
         var slapdash = new SlapdashClient (endpoint);
+        var options = new OllamaOptions
+        {
+            ContextWindow = input.ContextWindow,
+            TopK = input.TopK
+            // TODO: другие параметры
+        };
         var request = new AiRequest
         {
             ApiKey = apiKey,
-            Model = modelId
+            Model = modelId,
+            Temperature = input.Temperature,
+            TopP = input.TopP,
+            Seed = input.Seed,
+            MaxOutputTokens =  input.MaxOutputTokens,
+            Options = options
         };
 
         var message = imageBytes is null
@@ -252,7 +126,9 @@ public sealed partial class LlamaTalker
             Duration = elapsed
         };
 
-#endif
+        LogElapsedTime (logger, output.Duration);
+        LogFinishReason (logger, output.FinishReason);
+        LogTokenUsage (logger, output.Usage);
 
         return output;
     }
@@ -342,16 +218,16 @@ public sealed partial class LlamaTalker
     static partial void LogElapsedTime (ILogger logger, TimeSpan elapsed);
 
     [LoggerMessage (LogLevel.Debug, "Finish reason: {FinishReason}")]
-    static partial void LogFinishReason (ILogger logger, ChatFinishReason finishReason);
+    static partial void LogFinishReason (ILogger logger, string? finishReason);
 
-    [LoggerMessage (LogLevel.Debug, "Token usage: {Input}, {Output}, {Total}")]
-    static partial void LogTokenUsage (ILogger logger, int input, int output, int total);
+    [LoggerMessage (LogLevel.Debug, "Token usage: {Usage}")]
+    static partial void LogTokenUsage (ILogger logger, Usage? usage);
 
-    [LoggerMessage (LogLevel.Debug, "Acquiring GigaChat access token")]
-    static partial void LogAcquiringGigaChatAccessToken (ILogger logger);
+    // [LoggerMessage (LogLevel.Debug, "Acquiring GigaChat access token")]
+    // static partial void LogAcquiringGigaChatAccessToken (ILogger logger);
 
-    [LoggerMessage (LogLevel.Debug, "GigaClient access token={Token}")]
-    static partial void LogGigaChatAccessTokenToken(ILogger logger, string? token);
+    // [LoggerMessage (LogLevel.Debug, "GigaClient access token={Token}")]
+    // static partial void LogGigaChatAccessTokenToken(ILogger logger, string? token);
 
     #endregion
 }

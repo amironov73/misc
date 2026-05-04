@@ -13,8 +13,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-using Polly;
-using Polly.Retry;
+// using Polly;
+// using Polly.Retry;
 
 #endregion
 
@@ -31,7 +31,7 @@ public sealed class KrayApplication
     private readonly bool _verbose;
     private readonly ILogger _logger;
     private readonly IConfiguration _configuration;
-    private readonly ResiliencePipeline _resilience;
+    // private readonly ResiliencePipeline _resilience;
     private readonly int? _limit;
     private readonly bool _dryRun;
     private readonly bool _standardInput;
@@ -47,7 +47,7 @@ public sealed class KrayApplication
         var services = host.Services;
         _configuration = services.GetRequiredService<IConfiguration>();
         _logger = services.GetRequiredService<ILogger<KrayApplication>>();
-        _resilience = CreateResiliencePipeline();
+        // _resilience = CreateResiliencePipeline();
         _inputFileName = parameters.InputFileName;
         _outputFileName = parameters.OutputFileName;
         _verbose = parameters.Verbose;
@@ -68,7 +68,8 @@ public sealed class KrayApplication
     /// Создание "переговорщика".
     /// </summary>
     public LlamaTalker CreateTalker() =>
-        new (_logger, _configuration, _resilience);
+        new (_logger, _configuration //, _resilience
+            );
 
     public void ListModels()
     {
@@ -200,42 +201,42 @@ public sealed class KrayApplication
         Console.WriteLine();
     }
 
-    private ResiliencePipeline CreateResiliencePipeline()
-    {
-        var result = new ResiliencePipelineBuilder()
-            .AddRetry (new RetryStrategyOptions
-            {
-                BackoffType = DelayBackoffType.Constant,
-                Delay = TimeSpan.FromSeconds (3),
-                MaxRetryAttempts = 4,
-                OnRetry = args =>
-                {
-                    if (args.Outcome.Exception is { } ex)
-                    {
-                        _logger.LogError
-                            (
-                                ex,
-                                "OnRetry, attempt: {Attempt}, delay: {Delay}, message: {Message}",
-                                args.AttemptNumber,
-                                args.RetryDelay,
-                                ex.Message
-                            );
-                    }
-                    else
-                    {
-                        _logger.LogInformation
-                            (
-                                "OnRetry, attempt: {Attempt}, delay: {Delay}",
-                                args.AttemptNumber,
-                                args.RetryDelay
-                            );
-                    }
-
-                    return default;
-                }
-            })
-            .Build();
-
-        return result;
-    }
+    // private ResiliencePipeline CreateResiliencePipeline()
+    // {
+    //     var result = new ResiliencePipelineBuilder()
+    //         .AddRetry (new RetryStrategyOptions
+    //         {
+    //             BackoffType = DelayBackoffType.Constant,
+    //             Delay = TimeSpan.FromSeconds (3),
+    //             MaxRetryAttempts = 4,
+    //             OnRetry = args =>
+    //             {
+    //                 if (args.Outcome.Exception is { } ex)
+    //                 {
+    //                     _logger.LogError
+    //                         (
+    //                             ex,
+    //                             "OnRetry, attempt: {Attempt}, delay: {Delay}, message: {Message}",
+    //                             args.AttemptNumber,
+    //                             args.RetryDelay,
+    //                             ex.Message
+    //                         );
+    //                 }
+    //                 else
+    //                 {
+    //                     _logger.LogInformation
+    //                         (
+    //                             "OnRetry, attempt: {Attempt}, delay: {Delay}",
+    //                             args.AttemptNumber,
+    //                             args.RetryDelay
+    //                         );
+    //                 }
+    //
+    //                 return default;
+    //             }
+    //         })
+    //         .Build();
+    //
+    //     return result;
+    // }
 }

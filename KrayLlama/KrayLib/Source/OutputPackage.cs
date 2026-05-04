@@ -3,12 +3,6 @@
 
 // ReSharper disable CheckNamespace
 
-#region Using directives
-
-using OpenAI.Chat;
-
-#endregion
-
 namespace KrayLib;
 
 /// <summary>

@@ -10,7 +10,6 @@
 
 #region Using directives
 
-using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 
@@ -66,6 +65,23 @@ public sealed class ChatMessage
             string imageUrl
         )
     {
+        /*
+
+        "messages":
+        [
+          { "role": "user",
+            "content":
+            [
+                { "type": "text", "text": "What is in this image?" },
+                { "type": "image_url",
+                  "image_url": { "url": "data:image/jpeg;base64, "$base64_image" }
+                }
+            ]
+          }
+        ]
+
+        */
+
         var parts = new JsonArray();
         var textPart = new JsonObject();
         textPart.Add ("type", "text");
@@ -76,6 +92,7 @@ public sealed class ChatMessage
         var urlObject = new JsonObject();
         urlObject.Add ("url", imageUrl);
         imagePart.Add ("image_url", urlObject);
+        imagePart.Add ("detail", "high"); // ???
         parts.Add ((JsonNode) imagePart);
 
         var result = new ChatMessage

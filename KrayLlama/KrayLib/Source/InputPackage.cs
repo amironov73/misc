@@ -8,8 +8,6 @@
 using System.Globalization;
 using System.Text;
 
-using OpenAI.Chat;
-
 #endregion
 
 namespace KrayLib;
@@ -82,24 +80,29 @@ public sealed class InputPackage
     public int? MaxOutputTokens { get; set; }
 
     /// <summary>
+    /// Опционально.
+    /// </summary>
+    public int? ContextWindow { get; set; }
+
+    /// <summary>
     /// Режим вывода.
     /// </summary>
     public int? OutMode { get; set; }
 
     /// <summary>
-    /// Уровень детализации изображения.
+    /// Уровень детализации изображения: "low", "high", "auto".
     /// </summary>
-    public ChatImageDetailLevel? DetailLevel { get; set; }
+    public string? DetailLevel { get; set; }
 
-    /// <summary>
-    /// Идентификатор клиента GigaChat.
-    /// </summary>
-    public string? GigaClientId { get; set; }
-
-    /// <summary>
-    /// Секрет клиента GigaChat.
-    /// </summary>
-    public string? GigaClientSecret { get; set; }
+    // /// <summary>
+    // /// Идентификатор клиента GigaChat.
+    // /// </summary>
+    // public string? GigaClientId { get; set; }
+    //
+    // /// <summary>
+    // /// Секрет клиента GigaChat.
+    // /// </summary>
+    // public string? GigaClientSecret { get; set; }
 
     #endregion
 
@@ -280,31 +283,21 @@ public sealed class InputPackage
                             continue;
 
                         case "AUDIO":
-                            continue;
-
                         case "VIDEO":
-                            continue;
-
                         case "DOCUMENT":
                             continue;
 
                         case "IMAGEDETAILLEVEL":
-                            result.DetailLevel = value switch
-                            {
-                                "low" => ChatImageDetailLevel.Low,
-                                "high" => ChatImageDetailLevel.High,
-                                "auto" => ChatImageDetailLevel.Auto,
-                                _ => null
-                            };
+                            result.DetailLevel = value;
                             continue;
 
-                        case "GIGA_CLIENT_ID":
-                            result.GigaClientId = ParseString (value);
-                            break;
-
-                        case "GIGA_CLIENT_SECRET":
-                            result.GigaClientSecret = ParseString (value);
-                            break;
+                        // case "GIGA_CLIENT_ID":
+                        //     result.GigaClientId = ParseString (value);
+                        //     break;
+                        //
+                        // case "GIGA_CLIENT_SECRET":
+                        //     result.GigaClientSecret = ParseString (value);
+                        //     break;
 
                         default:
                             result.Prompt.Add (line);
