@@ -212,6 +212,44 @@ static BOOL WriteTextData
     return TRUE;
 }
 
+/*
+    In the Win32 API, the CREATE_NO_WINDOW flag is used with the
+    CreateProcess function to run a console application without
+    displaying a console window.
+
+    Key CharacteristicsPurpose:
+
+    * It allows a background console process to execute without popping
+      up a command prompt window on the user's desktop.
+
+    * Value: 0x08000000.
+
+    * Compatibility: This flag is strictly for console applications.
+      It is ignored if the application being launched is
+      a GUI (graphical) application.
+
+    * Conflicts: It is ignored if used in combination with
+      CREATE_NEW_CONSOLE or DETACHED_PROCESS.
+
+    Technical Details
+
+    * Console Attachment: When you use CREATE_NO_WINDOW, a console
+      is still technically created (often via a hidden conhost.exe instance),
+      but it remains invisible. This allows the child process
+      to perform standard I/O (stdout/stdin) if those handles
+      are redirected by the parent.
+
+    * Difference from DETACHED_PROCESS: Unlike DETACHED_PROCESS,
+      which creates a process with no console at all, CREATE_NO_WINDOW
+      creates a console that just happens to be hidden.
+
+    * Windows Version Behavior: On Windows 7 and later,
+      calling GetConsoleWindow in a process started with this flag
+      will return NULL, whereas on older versions it might return
+      a handle to a hidden window.
+
+ */
+
 static BOOL RunProcess
     (
         const char *commandLine
@@ -226,6 +264,8 @@ static BOOL RunProcess
 
     SecureZeroMemory ((char*) &processInfo, sizeof (PROCESS_INFORMATION ));
 
+    // Процесс представляет собой консольное приложение,
+    // которое выполняется без окна консоли.
     BOOL success = CreateProcessA
         (
             NULL, // no module name (use command line)
@@ -233,7 +273,7 @@ static BOOL RunProcess
             NULL, // Process handle not inheritable
             NULL, // Thread handle not inheritable
             FALSE, // Set handle inheritance to FALSE
-            0, // No creation flags
+            CREATE_NO_WINDOW, // No console window
             NULL, // Use parent's environment block
             NULL, // Use parent's starting directory
             &startupinfo, // Pointer to STARTUPINFO structure
